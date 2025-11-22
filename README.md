@@ -2,6 +2,9 @@
 
 **OracleTrace** is a simple logic path tracer for Python applications. It visualizes the execution flow of your code, helping you understand function calls and performance bottlenecks.
 
+- **PyPI:** https://pypi.org/project/oracletrace/
+- **GitHub:** https://github.com/KaykCaputo/oracletrace
+
 ## Installation
 
 ```bash
