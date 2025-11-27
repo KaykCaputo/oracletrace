@@ -2,12 +2,12 @@
 
 **OracleTrace** is a simple logic path tracer for Python applications. It visualizes the execution flow of your code, helping you understand function calls and performance bottlenecks.
 
-- **PyPI:** https://pypi.org/project/oracletrace/
-- **GitHub:** https://github.com/KaykCaputo/oracletrace
+[![PyPI](https://img.shields.io/pypi/v/oracletrace?label=PyPI)](https://pypi.org/project/oracletrace) [![PyPI Downloads](https://static.pepy.tech/personalized-badge/oracletrace?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/oracletrace)
 
-
+**GitHub:** https://github.com/KaykCaputo/oracletrace
 
 ## Features
+
 - **Performance Summary Table:** Visualize the most time-consuming functions with a clean table showing totam time, and average time per call.
 - **Logic Flow Visualization**: See a tree structure of function calls.
 - **Performance Metrics**: View execution time and call counts for each function.
@@ -16,7 +16,6 @@
 ## How It Works
 
 OracleTrace uses Python's built-in `sys.setprofile()` function to intercept function call events (`call`, `return`). It measures the time spent inside each function and records the caller-callee relationships. By tracking the file path of each function, it can filter out calls that are not part of your local project directory, resulting in a clean and relevant report.
-
 
 ## Installation
 
@@ -99,8 +98,11 @@ Logic Flow:
         └── my_app.py:calculate_results (2x, 0.4015s)
 ```
 
-
 ## Requirements
 
 - Python >= 3.10
 - [rich](https://github.com/Textualize/rich)
+
+## Contributing
+
+Contributions are welcome! If you find a bug, have a suggestion for a new feature, or want to improve the code, please feel free to open an issue or submit a pull request. All feedback and contributions are highly appreciated.
