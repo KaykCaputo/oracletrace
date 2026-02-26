@@ -8,10 +8,12 @@
 
 ## Features
 
-- **Performance Summary Table:** Visualize the most time-consuming functions with a clean table showing totam time, and average time per call.
+- **Performance Summary Table:** Visualize the most time-consuming functions with a clean table showing total time and average time per call.
 - **Logic Flow Visualization**: See a tree structure of function calls.
 - **Performance Metrics**: View execution time and call counts for each function.
 - **Clean Output**: Filters out internal Python calls for better readability.
+- **JSON Export:** Save trace results to a JSON file for further analysis or record keeping.
+- **Trace Comparison:** Compare two trace JSON files to see performance changes, new or removed functions, and time differences.
 
 ## How It Works
 
@@ -61,6 +63,18 @@ pip install oracletrace
 
     ```bash
     python -m oracletrace.cli your_script.py
+    ```
+
+    To export the trace result to a JSON file:
+
+    ```bash
+    oracletrace your_script.py --json result.json
+    ```
+
+    To compare two trace results:
+
+    ```bash
+    oracletrace your_script.py --json new_run.json --compare old_run.json
     ```
 
 ## Example Output
