@@ -1,16 +1,21 @@
 import sys
 import os
+import argparse
 import runpy
-from .tracer import start_trace, stop_trace, show_results
+from .tracer import Tracer
+
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: oracletrace <file.py>")
-        return 1
+    parser = argparse.ArgumentParser(
+        description="OracleTrace - Lightweight execution tracer for Python projects"
+    )
+    parser.add_argument("target", help="Python script to trace")
+    parser.add_argument("--json", help="Export trace result to JSON file")
+    args = parser.parse_args()
 
-    target = sys.argv[1]
+    target = args.target
 
-    if not isinstance(target, str) or not os.path.exists(target):
+    if not os.path.exists(target):
         print(f"Target not found: {target}")
         return 1
 
@@ -20,16 +25,28 @@ def main():
     # Setup paths so imports work correctly in the target script
     sys.path.insert(0, target_dir)
 
-
     # Start tracing, run the script, then stop
-    start_trace(root)
-    runpy.run_path(target, run_name="__main__")
-    stop_trace()
-    
+    tracer = Tracer(root)
+    tracer.start()
+    try:
+        runpy.run_path(target, run_name="__main__")
+    finally:
+        tracer.stop()
+
+    data = tracer.get_trace_data()
+
+    # Save json
+    if args.json:
+        import json
+
+        with open(args.json, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+
     # Display the analysis
-    show_results()
+    tracer.show_results()
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
