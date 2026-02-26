@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oracletrace"
-version = "0.1.3"
+version = "0.2.0"
 description = "Simple logic path tracer"
 authors = [{ name = "Kayk Caputo" }, { name = "André Gustavo" }]
 readme = "README.md"
