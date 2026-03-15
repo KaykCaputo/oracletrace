@@ -1,8 +1,13 @@
 # OracleTrace
-
 > Detect Python performance regressions and compare execution traces with a lightweight call graph profiler.
+<table><tr>
+<td><img src="https://raw.githubusercontent.com/KaykCaputo/oracletrace/master/oracletracecat.png" alt="OracleTrace Logo"/></td>
+<td>
 
 **OracleTrace** is a lightweight Python performance analysis tool designed to help developers detect performance regressions, compare execution traces, and visualize call graphs in a simple and readable way.
+
+</td>
+</tr></table>
 
 It is ideal for:
 
