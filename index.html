@@ -53,8 +53,6 @@
       
     
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
-    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -886,6 +884,7 @@
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
 </code></pre></div>
+<p><img alt="OracleTrace CLI demo" src="assets/oracletrace-cli-demo.gif" /></p>
 <h2 id="how-oracletrace-works">How OracleTrace works<a class="headerlink" href="#how-oracletrace-works" title="Permanent link">&para;</a></h2>
 <p>OracleTrace uses Python's built-in <code>sys.setprofile()</code> hook to capture <code>call</code> and <code>return</code> events, then aggregates function-level timing and call relationships.</p>
 <p>It filters out non-project code so output stays focused on what you actually own.</p>
