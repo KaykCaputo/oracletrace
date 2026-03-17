@@ -1,6 +1,6 @@
 [project]
 name = "oracletrace"
-version = "1.0.21"
+version = "1.0.25"
 description = "Detect Python performance regressions and compare execution traces with lightweight call graph visualization"
 authors = [
     { name = "Kayk Caputo" },
@@ -25,7 +25,7 @@ keywords = [
 ]
 
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
@@ -43,6 +43,7 @@ classifiers = [
 oracletrace = "oracletrace.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/KaykCaputo/oracletrace"
+Homepage = "https://kaykcaputo.github.io/oracletrace/"
 Repository = "https://github.com/KaykCaputo/oracletrace"
+Documentation = "https://kaykcaputo.github.io/oracletrace/"
 Issues = "https://github.com/KaykCaputo/oracletrace/issues"

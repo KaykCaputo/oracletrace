@@ -1,0 +1,90 @@
+site_name: OracleTrace
+site_author: Kayk Caputo
+site_url: https://kaykcaputo.github.io/oracletrace
+copyright: Copyright (c) 2025 Kayk Caputo and André Gustavo
+
+repo_name: KaykCaputo/oracletrace
+repo_url: https://github.com/KaykCaputo/oracletrace
+edit_uri: edit/master/docs/docs/
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  logo: assets/oracletracecat.png
+  favicon: assets/oracletracecat.png
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: slate
+      primary: blue grey
+      accent: cyan
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.action.edit
+    - content.tabs.link
+    - search.suggest
+    - search.share
+    - search.highlight
+    - toc.follow
+
+plugins:
+  - search:
+      lang: en
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Quickstart: quickstart.md
+  - CLI Reference: cli-reference.md
+  - Examples: examples.md
+
+markdown_extensions:
+  - meta
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - def_list
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+extra:
+  generator: false
+  keywords:
+    - oracletrace
+    - oracle trace
+    - python oracle trace
+    - python profiler
+    - lightweight python profiler
+    - performance regression detection
+    - python performance regression
+    - execution trace analysis
+    - execution tracing tool
+    - call graph visualization
+    - trace comparison
+    - function timing analysis
+    - ci performance monitoring
+    - cat logo profiler
+    - blackcat profiler
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/KaykCaputo/oracletrace
+    - icon: fontawesome/solid/box
+      link: https://pypi.org/project/oracletrace
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js

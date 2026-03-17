@@ -18,9 +18,14 @@ It is ideal for:
 * CI performance validation
 
 [![PyPI](https://img.shields.io/pypi/v/oracletrace?label=PyPI)](https://pypi.org/project/oracletrace) [![PyPI Downloads](https://static.pepy.tech/personalized-badge/oracletrace?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/oracletrace)
+[![GitHub Stars](https://img.shields.io/github/stars/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/network/members)
+
+Documentation: https://kaykcaputo.github.io/oracletrace/
 
 ---
-
+![OracleTrace CLI demo](https://raw.githubusercontent.com/KaykCaputo/oracletrace/master/oracletrace-cli-demo.gif)
+---
 ## Why OracleTrace?
 
 Performance regressions in Python projects are often hard to detect early.
@@ -46,8 +51,8 @@ Compare two JSON trace files and instantly see:
 
 * Slower functions
 * Faster functions
-* New function calls
-* Removed function calls
+* New functions
+* Removed functions
 
 ### Execution Trace Analysis
 
@@ -200,3 +205,11 @@ Logic Flow:
 Contributions are welcome.
 
 If you have ideas for improving regression detection, trace comparison, or visualization features, feel free to open an issue or submit a pull request.
+
+---
+
+## Give a Star
+
+If OracleTrace helps you, please consider giving this repository a star on GitHub.
+
+[Give a Star on GitHub](https://github.com/KaykCaputo/oracletrace/stargazers)

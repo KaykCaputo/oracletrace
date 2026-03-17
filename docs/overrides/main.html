@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  {% if page and page.meta %}
+    {% if page.meta.og_title %}
+      <meta property="og:title" content="{{ page.meta.og_title|e }}">
+    {% elif page.meta.title %}
+      <meta property="og:title" content="{{ page.meta.title|e }}">
+    {% endif %}
+    {% if page.meta.og_description %}
+      <meta property="og:description" content="{{ page.meta.og_description|e }}">
+    {% endif %}
+    {% if page.meta.keywords %}
+      <meta name="keywords" content="{{ page.meta.keywords|e }}">
+    {% endif %}
+  {% endif %}
+{% endblock %}
