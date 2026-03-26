@@ -2,6 +2,9 @@
 
 {% block extrahead %}
   {{ super() }}
+  {% if page and (page.url == '' or page.url == 'index.html') %}
+    <meta name="google-site-verification" content="GBVfHL9fnsB1Wsum0unoV5XZlIeWTrQ-y7THNKs807A" />
+  {% endif %}
   {% if page and page.meta %}
     {% if page.meta.og_title %}
       <meta property="og:title" content="{{ page.meta.og_title|e }}">
