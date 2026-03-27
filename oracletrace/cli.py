@@ -3,6 +3,7 @@ import os
 import json
 import argparse
 import runpy
+import csv
 from .tracer import Tracer
 from .compare import compare_traces
 
@@ -14,6 +15,7 @@ def main():
     parser.add_argument("target", help="Python script to trace")
     parser.add_argument("--json", help="Export trace result to JSON file")
     parser.add_argument("--compare", help="Compare against previous trace JSON")
+    parser.add_argument("--csv", help="Export trace result to CSV file")
     args = parser.parse_args()
 
     target = args.target
@@ -45,6 +47,20 @@ def main():
 
     # Display the analysis
     tracer.show_results()
+
+    # Export as csv
+    if args.csv:
+        with open(args.csv, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=["function", "total_time", "calls", "avg_time"])
+            writer.writeheader()
+            for fn in data["functions"]:
+                writer.writerow({
+                    "function":   fn["name"],
+                    "total_time": fn["total_time"],
+                    "calls":      fn["call_count"],
+                    "avg_time":   fn["avg_time"],
+                })
+
 
     # Compare jsons
     if args.compare:
