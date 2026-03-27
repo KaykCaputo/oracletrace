@@ -4,6 +4,7 @@ import json
 import argparse
 import runpy
 import csv
+from decimal import Decimal
 from .tracer import Tracer
 from .compare import compare_traces
 
@@ -16,6 +17,7 @@ def main():
     parser.add_argument("--json", help="Export trace result to JSON file")
     parser.add_argument("--compare", help="Compare against previous trace JSON")
     parser.add_argument("--csv", help="Export trace result to CSV file")
+    parser.add_argument("--top", type=int, default=Decimal('Infinity'), help="Limit output to TOP functions")
     args = parser.parse_args()
 
     target = args.target
@@ -46,7 +48,7 @@ def main():
             json.dump(data, f, indent=4)
 
     # Display the analysis
-    tracer.show_results()
+    tracer.show_results(max_functions=args.top)
 
     # Export as csv
     if args.csv:
