@@ -16,17 +16,23 @@ class Tracer:
         self._call_map = defaultdict(lambda: defaultdict(int))
         self._original_profile_func = None
         self._enabled = False
+        self._start_time = 0.0          
+        self._total_time = 0.0   
+
 
     def start(self):
         # Start Tracer
         self._enabled = True
+        self._start_time = time.perf_counter()          
         self._original_profile_func = sys.getprofile()
         sys.setprofile(self._trace)
-
+    
     def stop(self):
         # Stops Tracer
         self._enabled = False
+        self._total_time = time.perf_counter() - self._start_time  
         sys.setprofile(self._original_profile_func)
+
 
     def _is_user_code(self, filename):
         # Filter out files not in the project root
@@ -100,6 +106,7 @@ class Tracer:
 
         # Summary table
         print("[bold green]Summary:[/]")
+        print(f"[bold cyan]Total execution time: {self._total_time:.4f}s[/]")
         table = Table(title="Top functions by Total Time")
         table.add_column("Function", justify="left", style="cyan", no_wrap=True)
         table.add_column("Total Time (s)", justify="right", style="magenta")
@@ -167,6 +174,7 @@ class Tracer:
             "metadata": {
                 "root_path": self._root_path,
                 "total_functions": len(functions),
+                "total_execution_time": self._total_time,
             },
             "functions": functions,
         }
