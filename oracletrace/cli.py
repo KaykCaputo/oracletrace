@@ -14,6 +14,7 @@ def main():
     parser.add_argument("target", help="Python script to trace")
     parser.add_argument("--json", help="Export trace result to JSON file")
     parser.add_argument("--compare", help="Compare against previous trace JSON")
+    parser.add_argument("--ignore", help="Regex pattern to filter files/functions (e.g., 'test_.*' or '.*migrations.*')")
     args = parser.parse_args()
 
     target = args.target
@@ -29,7 +30,7 @@ def main():
     sys.path.insert(0, target_dir)
 
     # Start tracing, run the script, then stop
-    tracer = Tracer(root)
+    tracer = Tracer(root, ignore_pattern=args.ignore)
     tracer.start()
     try:
         runpy.run_path(target, run_name="__main__")

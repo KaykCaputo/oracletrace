@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import time
 from collections import defaultdict
 from rich.tree import Tree
@@ -8,7 +9,7 @@ from rich import print
 
 
 class Tracer:
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, ignore_pattern=None):
         self._root_path = os.path.abspath(root_dir)
         self._call_stack = []
         self._func_calls = defaultdict(int)
@@ -16,6 +17,7 @@ class Tracer:
         self._call_map = defaultdict(lambda: defaultdict(int))
         self._original_profile_func = None
         self._enabled = False
+        self._ignore_pattern = re.compile(ignore_pattern) if ignore_pattern else None
 
     def start(self):
         # Start Tracer
@@ -48,7 +50,13 @@ class Tracer:
             return None
         # Create a relative path key for readability
         rel_path = os.path.relpath(filename, self._root_path)
-        return f"{rel_path}:{frame.f_code.co_name}"
+        key = f"{rel_path}:{frame.f_code.co_name}"
+        
+        # Apply ignore pattern if specified
+        if self._ignore_pattern and self._ignore_pattern.search(key):
+            return None
+        
+        return key
 
     def _trace(self, frame, event, arg):
         try:
