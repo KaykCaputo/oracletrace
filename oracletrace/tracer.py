@@ -65,7 +65,8 @@ class Tracer:
             return None
         # Create a relative path key for readability
         rel_path = os.path.relpath(filename, self._root_path)
-        key = f"{rel_path}:{frame.f_code.co_name}"
+        qualname = getattr(frame.f_code, "co_qualname", frame.f_code.co_name)
+        key = f"{rel_path}:{qualname}"
 
         # Check if the file should be ignored based on inputted ignoring pattern
         if self._is_ignored(key):
