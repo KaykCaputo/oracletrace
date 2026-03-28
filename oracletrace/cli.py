@@ -23,6 +23,11 @@ def main():
         nargs="+",
         help="Space separated list of regex patterns for keys (file path and function name) to ignore."
     )
+    parser.add_argument(
+        "--top",
+        metavar="NUMBER", 
+        help="Limits the number of functions shown in the summary table"
+    )
     args = parser.parse_args()
 
     target = args.target
@@ -36,8 +41,10 @@ def main():
     target_dir = os.path.dirname(target)
     # Setup paths so imports work correctly in the target script
     sys.path.insert(0, target_dir)
+    ignored_args = [] if args.ignore is None else args.ignore
     ignore_patterns = []
-    for pattern in args.ignore:
+
+    for pattern in ignored_args:
         try:
             ignore_patterns.append(re.compile(pattern))
         except re.error as e:
@@ -60,7 +67,10 @@ def main():
             json.dump(data, f, indent=4)
 
     # Display the analysis
-    tracer.show_results()
+    if args.top:
+        tracer.show_results(int(args.top[0]))
+    else:
+        tracer.show_results(None)
 
     # Export as csv
     if args.csv:

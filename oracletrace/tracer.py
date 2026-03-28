@@ -116,7 +116,7 @@ class Tracer:
         except Exception as e:
             print(f"[bold red]Error in oracletrace tracer: {e}[/]", file=sys.stderr)
 
-    def show_results(self):
+    def show_results(self, _top):
         if not self._func_calls:
             print("[yellow]No calls traced.[/]")
             return
@@ -135,7 +135,7 @@ class Tracer:
             self._func_time.items(), key=lambda item: item[1], reverse=True
         )
 
-        for key, total_time in _sorted_by_time:
+        for key, total_time in _sorted_by_time[:_top]:
             calls = self._func_calls[key]
             avg_time_ms = (total_time / calls) * 1000 if calls > 0 else 0
             table.add_row(key, f"{total_time:.4f}", str(calls), f"{avg_time_ms:.3f}")
