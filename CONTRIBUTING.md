@@ -122,6 +122,14 @@ oracletrace your_script.py --json baseline.json
 oracletrace your_script.py --json current.json --compare baseline.json
 ```
 
+### CSV, ignore, and top flags
+
+```bash
+oracletrace your_script.py --csv trace.csv
+oracletrace your_script.py --ignore "helper_function,debug_*"
+oracletrace your_script.py --top 10
+```
+
 ### Docs build (if docs changed)
 
 ```bash
@@ -140,16 +148,36 @@ If your PR changes flags, behavior, output format, or workflows:
 
 ---
 
-## Bug Reports and Feature Requests
+## Issue and PR Templates
 
-When opening an issue, include:
+Use the GitHub templates when opening issues and pull requests. They keep reports consistent and speed up review.
 
-* Expected behavior
-* Actual behavior
-* Steps to reproduce
-* Python version
-* OS/environment details
-* Sample commands and output (if applicable)
+### Issue templates
+
+* Bug report: [`.github/ISSUE_TEMPLATE/bug_report.md`](.github/ISSUE_TEMPLATE/bug_report.md)
+* Feature request: [`.github/ISSUE_TEMPLATE/feature_request.md`](.github/ISSUE_TEMPLATE/feature_request.md)
+* Question or discussion: [`.github/ISSUE_TEMPLATE/question_or_discussion.md`](.github/ISSUE_TEMPLATE/question_or_discussion.md)
+
+When opening an issue, provide enough detail for maintainers to reproduce or evaluate quickly:
+
+* Expected behavior and actual behavior (for bugs)
+* Minimal reproduction steps
+* Python version and OS/environment details
+* Exact commands and output when relevant
+
+### Pull request template
+
+All pull requests should follow:
+
+* [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md)
+
+The template includes:
+
+* Required validation commands
+* Checklist items for style, tests, CI status, and docs updates
+* Before/after output section for behavior changes
+
+Please complete all relevant sections before requesting review.
 
 ---
 
