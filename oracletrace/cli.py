@@ -28,6 +28,17 @@ def main():
         metavar="NUMBER", 
         help="Limits the number of functions shown in the summary table"
     )
+    parser.add_argument(
+    "--fail-on-regression",
+    action="store_true",
+    help="Exit with a non-zero code when regression exceeds threshold.",
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=5.0,
+        help="Regression threshold percentage used with --fail-on-regression.",
+    )
     args = parser.parse_args()
 
     target = args.target
@@ -85,6 +96,7 @@ def main():
                     "avg_time":   fn["avg_time"],
                 })
 
+    comparison_result = None
 
     # Compare jsons
     if args.compare:
@@ -95,7 +107,14 @@ def main():
         with open(args.compare, "r", encoding="utf-8") as f:
             old_data = json.load(f)
 
-        compare_traces(old_data, data)
+        comparison_result = compare_traces(old_data, data, threshold=args.threshold)
+
+        if args.fail_on_regression and comparison_result["has_regression"]:
+            print(
+            f"Build failed: performance regression above {args.threshold:.2f}% detected."
+            )
+            return 2
+        
 
     return 0
 

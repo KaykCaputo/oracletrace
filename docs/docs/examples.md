@@ -50,6 +50,15 @@ oracletrace app.py --json v2.json --compare v1.json
 
 Great for release validation and refactor checks.
 
+## Fail the run on regression
+
+```bash
+oracletrace my_script.py --json baseline.json
+oracletrace my_script.py --json current.json --compare baseline.json --fail-on-regression --threshold 25
+```
+
+This is useful in CI when you want the run to fail if performance gets worse by more than 25 percent.
+
 ## Lightweight CI check pattern
 
 ```bash

@@ -12,8 +12,9 @@ Complete command reference for OracleTrace.
 
 ```bash
 oracletrace <target> [--json OUTPUT.json] [--csv OUTPUT.csv] [--compare BASELINE.json]
-oracletrace <target> [--ignore REGEX [REGEX ...]] 
+oracletrace <target> [--ignore REGEX [REGEX ...]]
 oracletrace <target> [--top NUMBER]
+oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT]
 ```
 
 ## Required argument
@@ -62,6 +63,24 @@ Comparison output includes:
 - Newly added functions
 - Removed functions
 
+### `--fail-on-regression`
+
+Makes OracleTrace return a non-zero exit code when a regression exceeds the configured threshold.
+
+Example:
+
+```bash
+oracletrace my_app.py --json current.json --compare baseline.json --fail-on-regression --threshold 25
+```
+
+### `--threshold`
+
+Sets the percentage threshold used with `--fail-on-regression`.
+
+```bash
+oracletrace my_app.py --compare baseline.json --fail-on-regression --threshold 25
+```
+
 ### `--ignore`
 
 Specify file paths and function names to ignore using regular expression syntax.
@@ -86,6 +105,7 @@ OracleTrace returns a non-zero exit code when:
 
 - The target script does not exist
 - The compare JSON file does not exist
+- `--fail-on-regression` is enabled and at least one function regresses above the threshold
 
 Non-zero exit codes can also happen when the target script fails at runtime or when the compare JSON file cannot be parsed.
 
