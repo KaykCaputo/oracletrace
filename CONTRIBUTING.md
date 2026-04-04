@@ -140,6 +140,11 @@ mkdocs build -f docs/mkdocs.yml
 
 ## Documentation Contributions
 
+### Required
+
+- [mkdocs](https://mkdocs.org)
+- the packages listed in `mkdocs -f docs/mkdocs.yml get-deps` must be installed in your python environment
+
 If your PR changes flags, behavior, output format, or workflows:
 
 * Update the relevant page in [docs/docs](docs/docs)
