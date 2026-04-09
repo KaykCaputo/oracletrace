@@ -541,6 +541,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#6-add-a-ci-regression-gate-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Add a CI regression gate (optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -684,6 +695,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#6-add-a-ci-regression-gate-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Add a CI regression gate (optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -747,9 +769,12 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
 </code></pre></div>
 <p>Keep this file as your reference run.</p>
+<p>Optional: also export to CSV for spreadsheet-style analysis.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--csv<span class="w"> </span>baseline.csv
+</code></pre></div>
 <h2 id="4-simulate-a-regression-and-compare">4. Simulate a regression and compare<a class="headerlink" href="#4-simulate-a-regression-and-compare" title="Permanent link">&para;</a></h2>
 <p>Increase one of the <code>sleep</code> values in your script, then run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
 </code></pre></div>
 <p>Comparison output highlights:</p>
 <ul>
@@ -759,12 +784,17 @@
 </ul>
 <h2 id="5-understand-the-output-quickly">5. Understand the output quickly<a class="headerlink" href="#5-understand-the-output-quickly" title="Permanent link">&para;</a></h2>
 <p>Example flow:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&lt;module&gt;
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>└── my_app.py:main
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    └── my_app.py:process_data
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        └── my_app.py:calculate_results
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>&lt;module&gt;
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>└── my_app.py:main
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    └── my_app.py:process_data
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>        └── my_app.py:calculate_results
 </code></pre></div>
 <p>OracleTrace is optimized for relative change detection between runs, which makes it ideal for everyday checks and CI validation.</p>
+<h2 id="6-add-a-ci-regression-gate-optional">6. Add a CI regression gate (optional)<a class="headerlink" href="#6-add-a-ci-regression-gate-optional" title="Permanent link">&para;</a></h2>
+<p>Use the comparison step as a build guard:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+<p>When a function regresses above the configured threshold, OracleTrace returns exit code <code>2</code>.</p>
 
 
 

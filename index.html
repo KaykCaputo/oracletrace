@@ -510,6 +510,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#csv-export-for-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV export for reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regression-gates-for-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression gates for CI
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -768,6 +790,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#csv-export-for-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV export for reporting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regression-gates-for-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression gates for CI
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -882,10 +926,15 @@
 <li>Historical regression tracking</li>
 <li>Custom analysis scripts</li>
 </ul>
+<h3 id="csv-export-for-reporting">CSV export for reporting<a class="headerlink" href="#csv-export-for-reporting" title="Permanent link">&para;</a></h3>
+<p>Export flat metrics for spreadsheet workflows and external dashboards.</p>
+<h3 id="regression-gates-for-ci">Regression gates for CI<a class="headerlink" href="#regression-gates-for-ci" title="Permanent link">&para;</a></h3>
+<p>Use <code>--fail-on-regression</code> and <code>--threshold</code> to fail builds only when slowdowns pass your tolerance.</p>
 <h2 id="quick-command-preview">Quick command preview<a class="headerlink" href="#quick-command-preview" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>my_app.py
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <p><img alt="OracleTrace CLI demo" src="assets/oracletrace-cli-demo.gif" /></p>
 <h2 id="how-oracletrace-works">How OracleTrace works<a class="headerlink" href="#how-oracletrace-works" title="Permanent link">&para;</a></h2>
