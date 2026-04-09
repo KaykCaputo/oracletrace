@@ -43,6 +43,9 @@ nav:
   - Quickstart: quickstart.md
   - CLI Reference: cli-reference.md
   - Examples: examples.md
+  - Changelogs:
+      - Overview: changelogs/index.md
+      - v2.0.0: changelogs/v2-0-0.md
 
 markdown_extensions:
   - meta
