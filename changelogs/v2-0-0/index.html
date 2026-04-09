@@ -6,37 +6,35 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Complete OracleTrace CLI reference with command syntax, options, workflows, and exit behavior.">
+        <meta name="description" content="Release notes and changelog for OracleTrace v2.0.0.">
       
       
         <meta name="author" content="Kayk Caputo">
       
       
-        <link rel="canonical" href="https://kaykcaputo.github.io/oracletrace/cli-reference/">
+        <link rel="canonical" href="https://kaykcaputo.github.io/oracletrace/changelogs/v2-0-0/">
       
       
-        <link rel="prev" href="../quickstart/">
+        <link rel="prev" href="../">
       
-      
-        <link rel="next" href="../examples/">
       
       
         
       
       
-      <link rel="icon" href="../assets/oracletracecat.png">
+      <link rel="icon" href="../../assets/oracletracecat.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>CLI Reference - OracleTrace</title>
+        <title>OracleTrace v2.0.0 Changelog - OracleTrace</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -65,13 +63,13 @@
   
   
     
-      <meta property="og:title" content="OracleTrace CLI Reference">
+      <meta property="og:title" content="OracleTrace v2.0.0 Changelog">
     
     
-      <meta property="og:description" content="Command syntax, options, workflows, and exit behavior for OracleTrace.">
+      <meta property="og:description" content="Release notes and changelog for OracleTrace v2.0.0.">
     
     
-      <meta name="keywords" content="oracletrace cli, oracle trace cli, python oracle trace cli, python trace command, --json option, --compare option, performance regression cli, execution trace command, call graph cli tool, command line profiler, terminal performance analysis, cat logo profiler, blackcat profiler">
+      <meta name="keywords" content="oracletrace v2.0.0, oracletrace changelog, oracletrace release notes">
     
   
 
@@ -94,7 +92,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cli-reference" class="md-skip">
+        <a href="#oracletrace-v200-release-notes" class="md-skip">
           Skip to content
         </a>
       
@@ -108,9 +106,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="OracleTrace" class="md-header__button md-logo" aria-label="OracleTrace" data-md-component="logo">
+    <a href="../.." title="OracleTrace" class="md-header__button md-logo" aria-label="OracleTrace" data-md-component="logo">
       
-  <img src="../assets/oracletracecat.png" alt="logo">
+  <img src="../../assets/oracletracecat.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -127,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              CLI Reference
+              OracleTrace v2.0.0 Changelog
             
           </span>
         </div>
@@ -231,7 +229,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -250,7 +248,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../installation/" class="md-tabs__link">
+      <a href="../../installation/" class="md-tabs__link">
         
   
   
@@ -269,7 +267,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../quickstart/" class="md-tabs__link">
+      <a href="../../quickstart/" class="md-tabs__link">
         
   
   
@@ -286,11 +284,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../../cli-reference/" class="md-tabs__link">
         
   
   
@@ -309,7 +305,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../examples/" class="md-tabs__link">
+      <a href="../../examples/" class="md-tabs__link">
         
   
   
@@ -326,11 +322,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../changelogs/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -364,9 +362,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="OracleTrace" class="md-nav__button md-logo" aria-label="OracleTrace" data-md-component="logo">
+    <a href="../.." title="OracleTrace" class="md-nav__button md-logo" aria-label="OracleTrace" data-md-component="logo">
       
-  <img src="../assets/oracletracecat.png" alt="logo">
+  <img src="../../assets/oracletracecat.png" alt="logo">
 
     </a>
     OracleTrace
@@ -393,7 +391,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -420,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
+      <a href="../../installation/" class="md-nav__link">
         
   
   
@@ -447,7 +445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart/" class="md-nav__link">
+      <a href="../../quickstart/" class="md-nav__link">
         
   
   
@@ -471,6 +469,145 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelogs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Changelogs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -490,7 +627,7 @@
   <span class="md-ellipsis">
     
   
-    CLI Reference
+    v2.0.0
   
 
     
@@ -508,7 +645,7 @@
   <span class="md-ellipsis">
     
   
-    CLI Reference
+    v2.0.0
   
 
     
@@ -534,10 +671,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#command-syntax" class="md-nav__link">
+  <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Command syntax
+        Summary
       
     </span>
   </a>
@@ -545,22 +682,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#required-argument" class="md-nav__link">
+  <a href="#changelog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required argument
+        Changelog
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Required argument">
+    <nav class="md-nav" aria-label="Changelog">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#target" class="md-nav__link">
+  <a href="#added" class="md-nav__link">
     <span class="md-ellipsis">
       
-        target
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improved
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes / Maintenance
       
     </span>
   </a>
@@ -573,104 +743,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optional-arguments" class="md-nav__link">
+  <a href="#compatibility-and-migration-notes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Optional arguments
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Optional arguments">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#-json" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --json
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-csv" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --csv
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-compare" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --compare
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-fail-on-regression" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --fail-on-regression
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-threshold" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --threshold
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-ignore" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --ignore
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-top" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --top
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#exit-behavior" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Exit behavior
+        Compatibility and Migration Notes
       
     </span>
   </a>
@@ -678,49 +754,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#typical-workflows" class="md-nav__link">
+  <a href="#recommended-ci-command" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Typical workflows
+        Recommended CI Command
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Typical workflows">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#local-development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Local development workflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ci-regression-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CI regression workflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#tips" class="md-nav__link">
+  <a href="#upgrade" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tips
+        Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thanks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thanks
       
     </span>
   </a>
@@ -731,142 +790,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Changelogs
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Changelogs
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../changelogs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../changelogs/v2-0-0/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    v2.0.0
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -906,10 +829,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#command-syntax" class="md-nav__link">
+  <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Command syntax
+        Summary
       
     </span>
   </a>
@@ -917,22 +840,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#required-argument" class="md-nav__link">
+  <a href="#changelog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required argument
+        Changelog
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Required argument">
+    <nav class="md-nav" aria-label="Changelog">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#target" class="md-nav__link">
+  <a href="#added" class="md-nav__link">
     <span class="md-ellipsis">
       
-        target
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improved
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes / Maintenance
       
     </span>
   </a>
@@ -945,104 +901,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optional-arguments" class="md-nav__link">
+  <a href="#compatibility-and-migration-notes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Optional arguments
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Optional arguments">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#-json" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --json
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-csv" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --csv
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-compare" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --compare
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-fail-on-regression" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --fail-on-regression
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-threshold" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --threshold
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-ignore" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --ignore
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-top" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        --top
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#exit-behavior" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Exit behavior
+        Compatibility and Migration Notes
       
     </span>
   </a>
@@ -1050,49 +912,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#typical-workflows" class="md-nav__link">
+  <a href="#recommended-ci-command" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Typical workflows
+        Recommended CI Command
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Typical workflows">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#local-development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Local development workflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ci-regression-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CI regression workflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#tips" class="md-nav__link">
+  <a href="#upgrade" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tips
+        Upgrade
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thanks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thanks
       
     </span>
   </a>
@@ -1116,7 +961,7 @@
 
 
   
-    <a href="https://github.com/KaykCaputo/oracletrace/edit/master/docs/docs/cli-reference.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/KaykCaputo/oracletrace/edit/master/docs/docs/changelogs/v2-0-0.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1124,85 +969,68 @@
   
 
 
-<h1 id="cli-reference">CLI Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h1>
-<p>Complete command reference for OracleTrace.</p>
-<h2 id="command-syntax">Command syntax<a class="headerlink" href="#command-syntax" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--json<span class="w"> </span>OUTPUT.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--csv<span class="w"> </span>OUTPUT.csv<span class="o">]</span><span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--ignore<span class="w"> </span>REGEX<span class="w"> </span><span class="o">[</span>REGEX<span class="w"> </span>...<span class="o">]]</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--top<span class="w"> </span>NUMBER<span class="o">]</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--fail-on-regression<span class="o">]</span><span class="w"> </span><span class="o">[</span>--threshold<span class="w"> </span>PERCENT<span class="o">]</span>
-</code></pre></div>
-<h2 id="required-argument">Required argument<a class="headerlink" href="#required-argument" title="Permanent link">&para;</a></h2>
-<h3 id="target"><code>target</code><a class="headerlink" href="#target" title="Permanent link">&para;</a></h3>
-<p>Path to the Python script you want to trace.</p>
-<p>Example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>oracletrace<span class="w"> </span>my_app.py
-</code></pre></div>
-<h2 id="optional-arguments">Optional arguments<a class="headerlink" href="#optional-arguments" title="Permanent link">&para;</a></h2>
-<h3 id="-json"><code>--json</code><a class="headerlink" href="#-json" title="Permanent link">&para;</a></h3>
-<p>Exports trace results to a JSON file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>run.json
-</code></pre></div>
-<p>Use this when you want to keep historical traces or compare later.</p>
-<h3 id="-csv"><code>--csv</code><a class="headerlink" href="#-csv" title="Permanent link">&para;</a></h3>
-<p>Exports the trace results to a csv file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--csv<span class="w"> </span>run.csv
-</code></pre></div>
-<h3 id="-compare"><code>--compare</code><a class="headerlink" href="#-compare" title="Permanent link">&para;</a></h3>
-<p>Compares the current run against a previous JSON trace.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
-</code></pre></div>
-<p>Comparison output includes:</p>
+<h1 id="oracletrace-v200-release-notes">OracleTrace v2.0.0 - Release Notes<a class="headerlink" href="#oracletrace-v200-release-notes" title="Permanent link">&para;</a></h1>
+<p><strong>Date:</strong> 2026-04-09</p>
+<p>This release consolidates major improvements across the CLI, performance regression workflows, test coverage, and documentation, with a strong focus on practical local usage and CI automation.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>OracleTrace 2.0.0 introduces:</p>
 <ul>
-<li>Functions with performance increase or decrease</li>
-<li>Newly added functions</li>
-<li>Removed functions</li>
+<li>New analysis and output controls (<code>--csv</code>, <code>--ignore</code>, <code>--top</code>)</li>
+<li>CI regression gating (<code>--fail-on-regression</code> + <code>--threshold</code>)</li>
+<li>Tracer improvements (including qualified function naming and timing)</li>
+<li>Automated CLI test coverage with <code>pytest</code></li>
+<li>Expanded and fully aligned documentation</li>
 </ul>
-<h3 id="-fail-on-regression"><code>--fail-on-regression</code><a class="headerlink" href="#-fail-on-regression" title="Permanent link">&para;</a></h3>
-<p>Makes OracleTrace return a non-zero exit code when a regression exceeds the configured threshold.</p>
-<p>Use this together with <code>--compare</code>.</p>
-<p>Example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
-</code></pre></div>
-<h3 id="-threshold"><code>--threshold</code><a class="headerlink" href="#-threshold" title="Permanent link">&para;</a></h3>
-<p>Sets the percentage threshold used with <code>--fail-on-regression</code>.</p>
-<p>Default value: <code>5.0</code></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
-</code></pre></div>
-<h3 id="-ignore"><code>--ignore</code><a class="headerlink" href="#-ignore" title="Permanent link">&para;</a></h3>
-<p>Specify file paths and function names to ignore using regular expression syntax.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
-</code></pre></div>
-<p>The ignored files and functions will not appear in the summary table neither the logic flow output.</p>
-<p>Ignore matching is applied on function keys in the form <code>relative_path.py:qualified_function_name</code>.</p>
-<h3 id="-top"><code>--top</code><a class="headerlink" href="#-top" title="Permanent link">&para;</a></h3>
-<p>Limit the summary table output to a maximum number of results.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
-</code></pre></div>
-<h2 id="exit-behavior">Exit behavior<a class="headerlink" href="#exit-behavior" title="Permanent link">&para;</a></h2>
-<p>OracleTrace returns a non-zero exit code when:</p>
+<h2 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h2>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
-<li>The target script does not exist</li>
-<li>The compare JSON file does not exist</li>
-<li><code>--fail-on-regression</code> is enabled and at least one function regresses above the threshold</li>
+<li>CSV export for trace results (<code>--csv</code>)</li>
+<li>Regex-based filtering for functions/paths (<code>--ignore</code>)</li>
+<li>Top-N summary limiting (<code>--top</code>)</li>
+<li>Regression fail mode for pipelines (<code>--fail-on-regression</code>)</li>
+<li>Configurable regression threshold (<code>--threshold</code>)</li>
+<li>Automated CLI tests with <code>pytest</code></li>
+<li>CI workflow running tests across multiple Python versions</li>
+<li>Issue and Pull Request templates for contribution consistency</li>
 </ul>
-<p>Non-zero exit codes can also happen when the target script fails at runtime or when the compare JSON file cannot be parsed.</p>
-<h2 id="typical-workflows">Typical workflows<a class="headerlink" href="#typical-workflows" title="Permanent link">&para;</a></h2>
-<h3 id="local-development-workflow">Local development workflow<a class="headerlink" href="#local-development-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># change code</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
-</code></pre></div>
-<h3 id="ci-regression-workflow">CI regression workflow<a class="headerlink" href="#ci-regression-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
-</code></pre></div>
-<p>Store <code>baseline.json</code> as a known-good artifact.</p>
-<h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h2>
+<h3 id="improved">Improved<a class="headerlink" href="#improved" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Run from your project root so filtering focuses on your app code</li>
-<li>Keep baseline and current runs as similar as possible</li>
-<li>Use deterministic input data for reliable comparisons</li>
+<li>Clearer total execution timing in tracer output</li>
+<li>Fully qualified function naming with <code>co_qualname</code> for better trace identity</li>
+<li>More robust baseline vs current comparison flow for regression validation</li>
+<li>More predictable CLI error and exit behavior for automation</li>
 </ul>
+<h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>CLI Reference updated with current flags and usage</li>
+<li>Examples expanded (CSV export, ignore/top usage, CI regression gate)</li>
+<li>Quickstart updated with baseline/compare and optional CI gate flow</li>
+<li>README updated to reflect current features and recommended commands</li>
+<li>CONTRIBUTING updated to reflect the existing automated test suite</li>
+</ul>
+<h3 id="fixes-maintenance">Fixes / Maintenance<a class="headerlink" href="#fixes-maintenance" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Test workflow maintenance updates (including runtime matrix adjustments)</li>
+<li><code>.gitignore</code> update for generated docs paths</li>
+<li>Maintainer/contributor information updates</li>
+</ul>
+<h2 id="compatibility-and-migration-notes">Compatibility and Migration Notes<a class="headerlink" href="#compatibility-and-migration-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Requirement remains: <strong>Python &gt;= 3.10</strong></li>
+<li>Existing baseline + compare workflows remain valid</li>
+<li>No mandatory breaking migration for existing users</li>
+<li>For CI, recommended command pattern is:</li>
+<li><code>--fail-on-regression</code></li>
+<li><code>--threshold</code> tuned to your tolerance (for example <code>10</code> or <code>25</code>)</li>
+</ul>
+<h2 id="recommended-ci-command">Recommended CI Command<a class="headerlink" href="#recommended-ci-command" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+<h2 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>oracletrace
+</code></pre></div>
+<h2 id="thanks">Thanks<a class="headerlink" href="#thanks" title="Permanent link">&para;</a></h2>
+<p>Thanks to all contributors who helped ship this release across features, docs, tests, and repository infrastructure.</p>
 
 
 
@@ -1243,7 +1071,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../quickstart/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quickstart">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1253,27 +1081,11 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Quickstart
+                Overview
               </div>
             </div>
           </a>
         
-        
-          
-          <a href="../examples/" class="md-footer__link md-footer__link--next" aria-label="Next: Examples">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Examples
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
         
       </nav>
     
@@ -1329,10 +1141,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "content.code.copy", "content.action.edit", "content.tabs.link", "search.suggest", "search.share", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "content.code.copy", "content.action.edit", "content.tabs.link", "search.suggest", "search.share", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
       
