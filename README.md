@@ -1,13 +1,49 @@
 # OracleTrace — Python Performance Profiler
-> Detect Python performance regressions and compare execution traces with a lightweight call graph profiler.
+> Detect performance regressions between runs in seconds — without heavy profilers.
+
 <table><tr>
 <td><img src="https://raw.githubusercontent.com/KaykCaputo/oracletrace/master/oracletracecat.png" alt="OracleTrace Logo"/></td>
 <td>
 
-**OracleTrace** is a lightweight Python performance analysis tool designed to help developers detect performance regressions, compare execution traces, and visualize call graphs in a simple and readable way.
+**OracleTrace** is a lightweight Python tool that compares two execution traces and instantly shows what got slower, what changed, and what disappeared — so you catch regressions before they ship.
 
 </td>
 </tr></table>
+
+[![PyPI](https://img.shields.io/pypi/v/oracletrace?label=PyPI)](https://pypi.org/project/oracletrace) [![PyPI Downloads](https://static.pepy.tech/personalized-badge/oracletrace?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/oracletrace)
+[![GitHub Stars](https://img.shields.io/github/stars/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/network/members)
+
+Documentation: https://kaykcaputo.github.io/oracletrace/
+
+> 📰 Featured in [PyCoder's Weekly #729](https://pycoders.com/issues/729) · Listed in [awesome-debugger](https://github.com/taowen/awesome-debugger)
+
+---
+
+## Quick Regression Example
+
+```bash
+# Capture baseline
+oracletrace app.py --json baseline.json
+
+# After refactoring, compare against baseline
+oracletrace app.py --json new.json --compare baseline.json
+```
+
+```
+Performance Regression Detected
+
+- calculate_results  → 2.1x slower  (0.20s → 0.42s)
++ new_cache_layer      detected (0.05s)
+- old_helper           removed
+```
+
+---
+
+### See OracleTrace in action:
+![OracleTrace CLI demo](https://raw.githubusercontent.com/KaykCaputo/oracletrace/master/oracletrace-cli-demo.gif)
+
+---
 
 It is ideal for:
 
@@ -17,21 +53,21 @@ It is ideal for:
 * Lightweight profiling without heavy instrumentation
 * CI performance validation
 
-[![PyPI](https://img.shields.io/pypi/v/oracletrace?label=PyPI)](https://pypi.org/project/oracletrace) [![PyPI Downloads](https://static.pepy.tech/personalized-badge/oracletrace?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/oracletrace)
-[![GitHub Stars](https://img.shields.io/github/stars/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/network/members)
+---
 
-Documentation: https://kaykcaputo.github.io/oracletrace/
+## How is this different?
+
+| Tool        | Focus                          |
+|-------------|--------------------------------|
+| cProfile    | Deep profiling                 |
+| viztracer   | Full execution tracing         |
+| OracleTrace | Regression detection & diffing |
 
 ---
-### See OracleTrace in action:
-![OracleTrace CLI demo](https://raw.githubusercontent.com/KaykCaputo/oracletrace/master/oracletrace-cli-demo.gif)
----
+
 ## Why OracleTrace?
 
-Performance regressions in Python projects are often hard to detect early.
-
-Traditional profilers focus on deep performance analysis, but they are not optimized for quick regression comparison between two executions.
+Performance regressions in Python projects are often hard to detect early. Traditional profilers focus on deep analysis but are not optimized for quickly comparing two executions.
 
 OracleTrace solves this by allowing you to:
 
@@ -41,6 +77,14 @@ OracleTrace solves this by allowing you to:
 * Identify performance differences
 * Detect new or removed functions
 * Measure execution time deltas
+
+---
+
+## Not Intended For
+
+* Deep micro-optimization profiling (use cProfile or py-spy)
+* Memory profiling (use memory_profiler or Memray)
+* Production tracing or monitoring
 
 ---
 
@@ -216,13 +260,6 @@ Thanks to all the people who have contributed to this project:
 <a href="https://github.com/KaykCaputo/oracletrace/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=KaykCaputo/oracletrace" />
 </a>
-
----
-
-## Recognition
-
-- Included in [awesome-debugger](https://github.com/taowen/awesome-debugger)
-- Featured in [PyCoder's Weekly #729](https://pycoders.com/issues/729)
 
 ---
 
