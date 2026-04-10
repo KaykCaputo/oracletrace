@@ -5,36 +5,66 @@ from collections import defaultdict
 from rich.tree import Tree
 from rich.table import Table
 from rich import print
+from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict
+from re import Pattern
+from pathlib import Path
+from types import FrameType
+from dataclasses import dataclass
 
+@dataclass
+class TracerMetadata:
+    root_path: str
+    total_functions: int
+    total_execution_time: float
+
+@dataclass
+class FunctionData:
+    name: str
+    total_time: float
+    call_count: int
+    avg_time: float
+    callees: List[str]
+
+@dataclass
+class TracerData:
+    metadata: TracerMetadata
+    functions: List[FunctionData]
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "TracerData":
+        return cls(
+            metadata=TracerMetadata(**data["metadata"]),
+            functions=[FunctionData(**f) for f in data["functions"]],
+        )
 
 class Tracer:
-    def __init__(self, root_dir, ignore_patterns = None):
-        self._root_path = os.path.abspath(root_dir)
-        self._call_stack = []
-        self._func_calls = defaultdict(int)
-        self._func_time = defaultdict(float)
-        self._call_map = defaultdict(lambda: defaultdict(int))
-        self._original_profile_func = None
-        self._enabled = False
-        self._start_time = 0.0          
-        self._total_time = 0.0
-        self._ignore_patterns = ignore_patterns
+    def __init__(self, root_dir: str, ignore_patterns: Optional[List[Pattern]] = None) -> None:
+        self._root_path: str = os.path.abspath(root_dir)
+        self._call_stack: List[Tuple[int, str, float]] = []
+        self._func_calls: DefaultDict[str, int] = defaultdict(int)
+        self._func_time: DefaultDict[str, float] = defaultdict(float)
+        self._call_map: DefaultDict[str, DefaultDict[str, int]] = defaultdict(lambda: defaultdict(int))
+        self._original_profile_func: Optional[Callable[[FrameType, str, Any], object]] = None
+        self._enabled: bool = False
+        self._start_time: float = 0.0          
+        self._total_time: float = 0.0
+        self._ignore_patterns: Optional[List[Pattern]] = ignore_patterns
 
 
-    def start(self):
+    def start(self) -> None:
         # Start Tracer
         self._enabled = True
         self._start_time = time.perf_counter()          
         self._original_profile_func = sys.getprofile()
         sys.setprofile(self._trace)
 
-    def stop(self):
+    def stop(self) -> None:
         # Stops Tracer
         self._enabled = False
         self._total_time = time.perf_counter() - self._start_time  
         sys.setprofile(self._original_profile_func)
 
-    def _is_ignored(self, filename):
+    def _is_ignored(self, filename: str) -> bool:
         # Return true if the filename should be ignored
         if not self._ignore_patterns:
             return False
@@ -45,28 +75,28 @@ class Tracer:
 
         return False
 
-    def _is_user_code(self, filename):
+    def _is_user_code(self, filename: str) -> bool:
         # Filter out files not in the project root
-        if not filename.startswith(self._root_path):
+        if not filename.startswith(str(self._root_path)):
             return False
         # Filter out third-party libraries
         if "site-packages" in filename or "dist-packages" in filename:
             return False
         return True
 
-    def _get_key(self, frame):
-        co_filename = frame.f_code.co_filename
+    def _get_key(self, frame: FrameType) -> Optional[str]:
+        co_filename: str = frame.f_code.co_filename
         # Ignore internal python frames (e.g. <string>)
         if co_filename.startswith("<"):
             return None
-        filename = os.path.abspath(co_filename)
+        filename: str = os.path.abspath(co_filename)
         # Check if the file belongs to the user's project
         if not self._is_user_code(filename):
             return None
         # Create a relative path key for readability
-        rel_path = os.path.relpath(filename, self._root_path)
-        qualname = getattr(frame.f_code, "co_qualname", frame.f_code.co_name)
-        key = f"{rel_path}:{qualname}"
+        rel_path: str = os.path.relpath(filename, self._root_path)
+        qualname: str = getattr(frame.f_code, "co_qualname", frame.f_code.co_name)
+        key: str = f"{rel_path}:{qualname}"
 
         # Check if the file should be ignored based on inputted ignoring pattern
         if self._is_ignored(key):
@@ -74,17 +104,17 @@ class Tracer:
 
         return key
 
-    def _trace(self, frame, event, arg):
+    def _trace(self, frame: FrameType, event: str, _: Any) -> None:
         try:
             if not self._enabled:
                 return
 
             if event == "call":
-                key = self._get_key(frame)
+                key: Optional[str] = self._get_key(frame)
                 if not key:
                     return
 
-                caller = self._call_stack[-1][1] if self._call_stack else "<module>"
+                caller: str = self._call_stack[-1][1] if self._call_stack else "<module>"
                 self._call_map[caller][key] += 1
                 self._func_calls[key] += 1
                 self._call_stack.append((id(frame), key, time.perf_counter()))
@@ -99,8 +129,8 @@ class Tracer:
                     self._func_time[key] += time.perf_counter() - start
                 else:
                     # Stack unwinding (handle exceptions or missed returns)
-                    fid = id(frame)
-                    found = False
+                    fid: int = id(frame)
+                    found: bool = False
                     # Search for the frame in the stack from top to bottom
                     for i in range(len(self._call_stack) - 1, -1, -1):
                         if self._call_stack[i][0] == fid:
@@ -117,7 +147,7 @@ class Tracer:
         except Exception as e:
             print(f"[bold red]Error in oracletrace tracer: {e}[/]", file=sys.stderr)
 
-    def show_results(self, _top):
+    def show_results(self, _top: Optional[int]) -> None:
         if not self._func_calls:
             print("[yellow]No calls traced.[/]")
             return
@@ -125,7 +155,7 @@ class Tracer:
         # Summary table
         print("[bold green]Summary:[/]")
         print(f"[bold cyan]Total execution time: {self._total_time:.4f}s[/]")
-        table = Table(title="Top functions by Total Time")
+        table: Table = Table(title="Top functions by Total Time")
         table.add_column("Function", justify="left", style="cyan", no_wrap=True)
         table.add_column("Total Time (s)", justify="right", style="magenta")
         table.add_column("Calls", justify="right", style="green")
@@ -145,11 +175,11 @@ class Tracer:
 
         print("\n[bold green]Logic Flow:[/]")
 
-        tree = Tree("[bold yellow]<module>[/]")
+        tree: Tree = Tree("[bold yellow]<module>[/]")
 
         # Recursively build the execution tree
-        def add_nodes(parent_node, parent_key, current_path):
-            children = self._call_map.get(parent_key, {})
+        def add_nodes(parent_node: Tree, parent_key: str, current_path: set[str]) -> None:
+            children: DefaultDict[str,int] = self._call_map.get(parent_key, defaultdict(int))
             # Sort children by total execution time
             sorted_children = sorted(
                 children.items(),
@@ -171,37 +201,39 @@ class Tracer:
         add_nodes(tree, "<module>", {"<module>"})
         print(tree)
 
-    def get_trace_data(self):
-        functions = []
+    def get_trace_data(self) -> TracerData:
+        functions: List[FunctionData] = []
 
         for key, total_time in self._func_time.items():
             calls = self._func_calls[key]
             avg_time = total_time / calls if calls else 0
 
             functions.append(
-                {
-                    "name": key,
-                    "total_time": total_time,
-                    "call_count": calls,
-                    "avg_time": avg_time,
-                    "callees": list(self._call_map.get(key, {}).keys()),
-                }
+                FunctionData(
+                    name = key,
+                    total_time = total_time,
+                    call_count = calls,
+                    avg_time = avg_time,
+                    callees = list(self._call_map.get(key, {}).keys()),
+                )
             )
 
-        return {
-            "metadata": {
-                "root_path": self._root_path,
-                "total_functions": len(functions),
-                "total_execution_time": self._total_time,
-            },
-            "functions": functions,
-        }
+        metadata: TracerMetadata = TracerMetadata(
+            root_path = self._root_path,
+            total_functions = len(functions),
+            total_execution_time = self._total_time,
+        )
+
+        return TracerData(
+            metadata=metadata,
+            functions=functions,
+        )
 
 
-_tracer_instance = None
+_tracer_instance: Optional[Tracer] = None
 
 
-def start_trace(root_dir):
+def start_trace(root_dir: str) -> None:
     # Starts tracer instance
     global _tracer_instance
     if _tracer_instance is not None:
@@ -211,7 +243,7 @@ def start_trace(root_dir):
     _tracer_instance.start()
 
 
-def stop_trace():
+def stop_trace() -> Optional[TracerData]:
     # Stops tracer instance
     global _tracer_instance
     if _tracer_instance:
@@ -224,10 +256,10 @@ def stop_trace():
         return None
 
 
-def show_results():
+def show_results(top: Optional[int]) -> None:
     # Show results from global tracer instance
     global _tracer_instance
     if _tracer_instance:
-        _tracer_instance.show_results()
+        _tracer_instance.show_results(top)
     else:
         print("[yellow]Tracer was not started.[/]")

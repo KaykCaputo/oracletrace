@@ -2,7 +2,9 @@ import json
 import importlib
 import sys
 from pathlib import Path
-
+from oracletrace.tracer import TracerData, FunctionData, TracerMetadata
+from oracletrace.compare import ComparisonData
+from dataclasses import asdict
 import pytest
 
 
@@ -15,24 +17,41 @@ assert str(REPO_ROOT / "oracletrace") in str(Path(cli.__file__).resolve())
 
 
 @pytest.fixture
-def trace_data():
-    return {
-        "functions": [
-            {
-                "name": "foo",
-                "total_time": 1.5,
-                "call_count": 3,
-                "avg_time": 0.5,
-            },
-            {
-                "name": "bar",
-                "total_time": 2.0,
-                "call_count": 2,
-                "avg_time": 1.0,
-            },
+def trace_data() -> TracerData:
+    return TracerData(
+        metadata = TracerMetadata(
+            total_execution_time = 3.0,
+            total_functions = 2,
+            root_path = str(REPO_ROOT) 
+        ),
+        functions = [
+            FunctionData(
+                name = "foo",
+                total_time = 1.5,
+                call_count = 3,
+                avg_time = 0.5,
+                callees=[]
+            ),
+            FunctionData(
+                name = "bar",
+                total_time = 2.0,
+                call_count = 2,
+                avg_time = 1.0,
+                callees=[]
+            )
         ]
-    }
-
+    )
+    
+@pytest.fixture
+def empty_trace_data() -> TracerData:
+    return TracerData(
+        metadata = TracerMetadata(
+            total_execution_time = 0.0,
+            total_functions = 0,
+            root_path = str(REPO_ROOT)
+        ),
+        functions = []
+    )
 
 class FakeTracer:
     def __init__(self, root, ignore_patterns, data):
@@ -125,7 +144,7 @@ def test_main_runs_trace_and_exports_json_and_csv(monkeypatch, tmp_path, trace_d
     assert run_path_calls == [(str(target.resolve()), "__main__")]
 
     loaded_json = json.loads(json_output.read_text(encoding="utf-8"))
-    assert loaded_json == trace_data
+    assert TracerData.from_dict(loaded_json) == trace_data
 
     csv_text = csv_output.read_text(encoding="utf-8")
     assert "function,total_time,calls,avg_time" in csv_text
@@ -173,20 +192,20 @@ def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace
     assert "Compare file not found:" in captured.out
 
 
-def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, trace_data, capsys):
+def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace_data, capsys):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
     compare_file = tmp_path / "baseline.json"
-    compare_file.write_text(json.dumps({"functions": []}), encoding="utf-8")
+    compare_file.write_text(json.dumps(asdict(empty_trace_data)), encoding="utf-8")
 
-    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, empty_trace_data))
     monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
 
     compare_calls = []
 
     def fake_compare_traces(old_data, new_data, threshold):
         compare_calls.append((old_data, new_data, threshold))
-        return {"has_regression": True}
+        return ComparisonData(regressions=[], has_regression=True)
 
     monkeypatch.setattr(cli, "compare_traces", fake_compare_traces)
 
@@ -213,11 +232,11 @@ def test_main_returns_0_when_no_regression(monkeypatch, tmp_path, trace_data):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
     compare_file = tmp_path / "baseline.json"
-    compare_file.write_text(json.dumps({"functions": []}), encoding="utf-8")
+    compare_file.write_text(json.dumps(asdict(trace_data)), encoding="utf-8")
 
     monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
     monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
-    monkeypatch.setattr(cli, "compare_traces", lambda old_data, new_data, threshold: {"has_regression": False})
+    monkeypatch.setattr(cli, "compare_traces", lambda old_data, new_data, threshold: ComparisonData(regressions=[], has_regression=False))
 
     exit_code = _run_cli(
         monkeypatch,
