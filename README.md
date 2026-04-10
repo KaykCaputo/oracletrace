@@ -20,6 +20,8 @@ It is ideal for:
 [![PyPI](https://img.shields.io/pypi/v/oracletrace?label=PyPI)](https://pypi.org/project/oracletrace) [![PyPI Downloads](https://static.pepy.tech/personalized-badge/oracletrace?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/oracletrace)
 [![GitHub Stars](https://img.shields.io/github/stars/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/KaykCaputo/oracletrace?style=social)](https://github.com/KaykCaputo/oracletrace/network/members)
+[![CI Tests](https://github.com/KaykCaputo/oracletrace/actions/workflows/tests.yml/badge.svg)](https://github.com/KaykCaputo/oracletrace/actions/workflows/tests.yml)
+
 
 Documentation: https://kaykcaputo.github.io/oracletrace/
 
