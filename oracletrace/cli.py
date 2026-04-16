@@ -43,6 +43,11 @@ def main() -> int:
         default=5.0,
         help="Regression threshold percentage used with --fail-on-regression.",
     )
+    parser.add_argument(
+        "--only-regressions",
+        action="store_true",
+        help="Hide functions which didn't run slower than baseline. Use with --compare"
+    )
     args: Namespace = parser.parse_args()
 
     target: str = args.target
@@ -111,7 +116,7 @@ def main() -> int:
         with open(args.compare, "r", encoding="utf-8") as f:
             old_data: TracerData = TracerData.from_dict(json.load(f))
 
-        comparison_result = compare_traces(old_data, data, threshold=args.threshold)
+        comparison_result = compare_traces(old_data, data, threshold=args.threshold, show_only_regressions=args.only_regressions)
 
         if args.fail_on_regression and comparison_result.has_regression:
             print(

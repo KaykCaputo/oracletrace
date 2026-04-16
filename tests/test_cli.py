@@ -20,7 +20,33 @@ assert str(REPO_ROOT / "oracletrace") in str(Path(cli.__file__).resolve())
 def trace_data() -> TracerData:
     return TracerData(
         metadata = TracerMetadata(
-            total_execution_time = 3.0,
+            total_execution_time = 5.033,
+            total_functions = 2,
+            root_path = str(REPO_ROOT) 
+        ),
+        functions = [
+            FunctionData(
+                name = "foo",
+                total_time = 3.033,
+                call_count = 3,
+                avg_time = 1.011,
+                callees=[]
+            ),
+            FunctionData(
+                name = "bar",
+                total_time = 2.0,
+                call_count = 2,
+                avg_time = 1.0,
+                callees=[]
+            )
+        ]
+    )
+
+@pytest.fixture
+def baseline_trace_data() -> TracerData:
+    return TracerData(
+        metadata = TracerMetadata(
+            total_execution_time = 3.5,
             total_functions = 2,
             root_path = str(REPO_ROOT) 
         ),
@@ -148,7 +174,7 @@ def test_main_runs_trace_and_exports_json_and_csv(monkeypatch, tmp_path, trace_d
 
     csv_text = csv_output.read_text(encoding="utf-8")
     assert "function,total_time,calls,avg_time" in csv_text
-    assert "foo,1.5,3,0.5" in csv_text
+    assert "foo,3.033,3,1.011" in csv_text
     assert "bar,2.0,2,1.0" in csv_text
 
     assert sys.path[0] == str(target.parent.resolve())
@@ -203,8 +229,8 @@ def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace
 
     compare_calls = []
 
-    def fake_compare_traces(old_data, new_data, threshold):
-        compare_calls.append((old_data, new_data, threshold))
+    def fake_compare_traces(old_data, new_data, threshold, show_only_regressions):
+        compare_calls.append((old_data, new_data, threshold, show_only_regressions))
         return ComparisonData(regressions=[], has_regression=True)
 
     monkeypatch.setattr(cli, "compare_traces", fake_compare_traces)
@@ -236,7 +262,14 @@ def test_main_returns_0_when_no_regression(monkeypatch, tmp_path, trace_data):
 
     monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
     monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
-    monkeypatch.setattr(cli, "compare_traces", lambda old_data, new_data, threshold: ComparisonData(regressions=[], has_regression=False))
+    monkeypatch.setattr(
+        cli,
+        "compare_traces",
+        lambda old_data, new_data, threshold, show_only_regressions: ComparisonData(
+            regressions=[],
+            has_regression=False
+        )
+    )
 
     exit_code = _run_cli(
         monkeypatch,
@@ -250,3 +283,29 @@ def test_main_returns_0_when_no_regression(monkeypatch, tmp_path, trace_data):
     )
 
     assert exit_code == 0
+
+def test_main_shows_only_regressions(monkeypatch, tmp_path, trace_data, baseline_trace_data, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    compare_file = tmp_path / "baseline.json"
+    compare_file.write_text(json.dumps(asdict(baseline_trace_data)), encoding="utf-8")
+    
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            str(target),
+            "--compare",
+            str(compare_file),
+            "--only-regressions",
+        ],
+    )
+
+    captured = capsys.readouterr()
+    assert f"{trace_data.functions[0].name}\n" in captured.out
+    assert f"    total_time: {baseline_trace_data.functions[0].total_time:.4f}s → {trace_data.functions[0].total_time:.4f}s" in captured.out
+    assert f"(+{102.2:.2f}%)\n" in captured.out
+    assert f"{trace_data.functions[1].name}\n" not in captured.out

@@ -14,7 +14,7 @@ Complete command reference for OracleTrace.
 oracletrace <target> [--json OUTPUT.json] [--csv OUTPUT.csv] [--compare BASELINE.json]
 oracletrace <target> [--ignore REGEX [REGEX ...]]
 oracletrace <target> [--top NUMBER]
-oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT]
+oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
 ```
 
 ## Required argument
@@ -83,6 +83,18 @@ Default value: `5.0`
 
 ```bash
 oracletrace my_app.py --compare baseline.json --fail-on-regression --threshold 25
+```
+
+### `---only-regressions`
+
+Shows only the regressions in the diff output when comparing traces.
+
+Use with `--compare`.
+
+Default value: False
+
+```bash
+oracletrace my_app.py --compare baseline.json --only-regressions
 ```
 
 ### `--ignore`

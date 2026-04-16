@@ -15,7 +15,12 @@ class ComparisonData:
     regressions: List[RegressionData]
     has_regression: bool
 
-def compare_traces(old_data: TracerData, new_data: TracerData, threshold: float = 5.0) -> ComparisonData:
+def compare_traces(
+    old_data: TracerData,
+    new_data: TracerData,
+    threshold: float = 5.0,
+    show_only_regressions: bool = False
+) -> ComparisonData:
     old_funcs: Dict[str, FunctionData] = {f.name: f for f in old_data.functions}
     new_funcs: Dict[str, FunctionData] = {f.name: f for f in new_data.functions}
 
@@ -52,8 +57,9 @@ def compare_traces(old_data: TracerData, new_data: TracerData, threshold: float 
             f"{name}\n"
             f"    total_time: {old_time:.4f}s → {new_time:.4f}s "
             f"[{color}]({percent:+.2f}%)[/]\n"
-        )
-
+        ) if not show_only_regressions or diff > 0.0 else ...
+        
+        
         if percent > threshold:
             regressions.append(
                 RegressionData(

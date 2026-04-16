@@ -75,6 +75,12 @@ Exit code behavior in this case:
 - `0` when no regression exceeds threshold
 - `2` when at least one regression exceeds threshold
 
+## Print only regressions
+
+```bash
+oracletrace my_script.py --compare baseline.json --only-regressions
+```
+
 ## Ignore noisy functions or files
 
 ```bash
