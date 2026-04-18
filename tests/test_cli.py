@@ -111,7 +111,7 @@ def test_main_returns_1_when_target_not_found(monkeypatch, capsys):
 
     captured = capsys.readouterr()
     assert exit_code == 1
-    assert "Target not found: missing_script.py" in captured.out
+    assert "Target not found: missing_script.py" in captured.err
 
 
 def test_main_returns_1_when_ignore_regex_is_invalid(monkeypatch, tmp_path, capsys):
@@ -122,7 +122,7 @@ def test_main_returns_1_when_ignore_regex_is_invalid(monkeypatch, tmp_path, caps
 
     captured = capsys.readouterr()
     assert exit_code == 1
-    assert "Regex error: [" in captured.out
+    assert "Regex error: [" in captured.err
 
 
 def test_main_runs_trace_and_exports_json_and_csv(monkeypatch, tmp_path, trace_data):
@@ -201,6 +201,59 @@ def test_main_passes_top_value_to_show_results(monkeypatch, tmp_path, trace_data
     assert fake_tracer.show_results_calls == [5]
 
 
+def test_main_passes_multidigit_top_value(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    fake_tracer_holder = {}
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "10"])
+
+    fake_tracer = fake_tracer_holder["instance"]
+    assert exit_code == 0
+    assert fake_tracer.show_results_calls == [10]
+
+
+def test_main_rejects_zero_top(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "0"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "--top must be a positive integer" in captured.err
+
+
+def test_main_rejects_negative_top(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "-5"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "--top must be a positive integer" in captured.err
+
+
+def test_main_rejects_non_integer_top(monkeypatch, tmp_path):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as exc_info:
+        _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "foo"])
+
+    assert exc_info.value.code == 2
+
+
 def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace_data, capsys):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
@@ -215,7 +268,7 @@ def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace
 
     captured = capsys.readouterr()
     assert exit_code == 1
-    assert "Compare file not found:" in captured.out
+    assert "Compare file not found:" in captured.err
 
 
 def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace_data, capsys):
@@ -250,7 +303,7 @@ def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace
 
     captured = capsys.readouterr()
     assert exit_code == 2
-    assert "Build failed: performance regression above 7.50% detected." in captured.out
+    assert "Build failed: performance regression above 7.50% detected." in captured.err
     assert compare_calls[0][2] == 7.5
 
 

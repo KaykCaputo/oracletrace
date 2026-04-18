@@ -29,7 +29,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--top",
-        metavar="NUMBER", 
+        metavar="NUMBER",
+        type=int,
         help="Limits the number of functions shown in the summary table"
     )
     parser.add_argument(
@@ -52,8 +53,12 @@ def main() -> int:
 
     target: str = args.target
 
+    if args.top is not None and args.top < 1:
+        print(f"--top must be a positive integer, got: {args.top}", file=sys.stderr)
+        return 1
+
     if not os.path.exists(target):
-        print(f"Target not found: {target}")
+        print(f"Target not found: {target}", file=sys.stderr)
         return 1
 
     target = os.path.abspath(target)
@@ -68,7 +73,7 @@ def main() -> int:
         try:
             ignore_patterns.append(re.compile(pattern))
         except re.error as e:
-            print(f"Regex error: {pattern} -> {e}")
+            print(f"Regex error: {pattern} -> {e}", file=sys.stderr)
             return 1
 
     # Start tracing, run the script, then stop
@@ -87,8 +92,8 @@ def main() -> int:
             json.dump(asdict(data), f, indent=4)
 
     # Display the analysis
-    if args.top:
-        tracer.show_results(int(args.top[0]))
+    if args.top is not None:
+        tracer.show_results(args.top)
     else:
         tracer.show_results(None)
 
@@ -110,7 +115,7 @@ def main() -> int:
     # Compare jsons
     if args.compare:
         if not os.path.exists(args.compare):
-            print(f"Compare file not found: {args.compare}")
+            print(f"Compare file not found: {args.compare}", file=sys.stderr)
             return 1
 
         with open(args.compare, "r", encoding="utf-8") as f:
@@ -120,7 +125,8 @@ def main() -> int:
 
         if args.fail_on_regression and comparison_result.has_regression:
             print(
-            f"Build failed: performance regression above {args.threshold:.2f}% detected."
+                f"Build failed: performance regression above {args.threshold:.2f}% detected.",
+                file=sys.stderr,
             )
             return 2
         
