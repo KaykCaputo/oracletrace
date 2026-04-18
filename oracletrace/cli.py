@@ -53,7 +53,7 @@ def main() -> int:
     target: str = args.target
 
     if not os.path.exists(target):
-        print(f"Target not found: {target}")
+        print(f"Target not found: {target}", file=sys.stderr)
         return 1
 
     target = os.path.abspath(target)
@@ -68,7 +68,7 @@ def main() -> int:
         try:
             ignore_patterns.append(re.compile(pattern))
         except re.error as e:
-            print(f"Regex error: {pattern} -> {e}")
+            print(f"Regex error: {pattern} -> {e}", file=sys.stderr)
             return 1
 
     # Start tracing, run the script, then stop
@@ -110,7 +110,7 @@ def main() -> int:
     # Compare jsons
     if args.compare:
         if not os.path.exists(args.compare):
-            print(f"Compare file not found: {args.compare}")
+            print(f"Compare file not found: {args.compare}", file=sys.stderr)
             return 1
 
         with open(args.compare, "r", encoding="utf-8") as f:
@@ -120,7 +120,8 @@ def main() -> int:
 
         if args.fail_on_regression and comparison_result.has_regression:
             print(
-            f"Build failed: performance regression above {args.threshold:.2f}% detected."
+            f"Build failed: performance regression above {args.threshold:.2f}% detected.",
+            file=sys.stderr,
             )
             return 2
         
