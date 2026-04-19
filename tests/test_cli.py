@@ -244,14 +244,30 @@ def test_main_rejects_negative_top(monkeypatch, tmp_path, capsys):
     assert "--top must be a positive integer" in captured.err
 
 
-def test_main_rejects_non_integer_top(monkeypatch, tmp_path):
+def test_main_rejects_non_integer_top(monkeypatch, tmp_path, capsys):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
 
     with pytest.raises(SystemExit) as exc_info:
         _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "foo"])
 
+    captured = capsys.readouterr()
+
     assert exc_info.value.code == 2
+    assert "--top" in captured.err
+
+
+def test_main_rejects_float_top(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as exc_info:
+        _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "1.5"])
+
+    captured = capsys.readouterr()
+
+    assert exc_info.value.code == 2
+    assert "--top" in captured.err
 
 
 def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace_data, capsys):
