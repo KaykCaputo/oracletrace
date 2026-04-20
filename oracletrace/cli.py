@@ -30,7 +30,6 @@ def main() -> int:
     parser.add_argument(
         "--top",
         metavar="NUMBER",
-        type=int,
         help="Limits the number of functions shown in the summary table"
     )
     parser.add_argument(
@@ -53,9 +52,16 @@ def main() -> int:
 
     target: str = args.target
 
-    if args.top is not None and args.top < 1:
-        print(f"--top must be a positive integer, got: {args.top}", file=sys.stderr)
-        return 1
+    # Validate --top argument manually to ensure all paths are testable
+    if args.top is not None:
+        try:
+            args.top = int(args.top)
+        except ValueError:
+            print(f"argument --top: invalid int value: '{args.top}'", file=sys.stderr)
+            return 2
+        if args.top < 1:
+            print(f"--top must be a positive integer, got: {args.top}", file=sys.stderr)
+            return 1
 
     if not os.path.exists(target):
         print(f"Target not found: {target}", file=sys.stderr)

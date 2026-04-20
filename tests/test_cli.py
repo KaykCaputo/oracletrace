@@ -244,14 +244,79 @@ def test_main_rejects_negative_top(monkeypatch, tmp_path, capsys):
     assert "--top must be a positive integer" in captured.err
 
 
-def test_main_rejects_non_integer_top(monkeypatch, tmp_path):
+def test_main_rejects_non_integer_top(monkeypatch, tmp_path, capsys):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
 
-    with pytest.raises(SystemExit) as exc_info:
-        _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "foo"])
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "foo"])
 
-    assert exc_info.value.code == 2
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert "invalid int value" in captured.err
+
+
+def test_main_rejects_float_top(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "3.5"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert "invalid int value" in captured.err
+
+
+def test_main_rejects_empty_top(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", ""])
+
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert "invalid int value" in captured.err
+
+
+def test_main_accepts_top_with_whitespace(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    fake_tracer_holder = {}
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", " 5 "])
+
+    fake_tracer = fake_tracer_holder["instance"]
+    assert exit_code == 0
+    assert fake_tracer.show_results_calls == [5]
+
+
+def test_main_accepts_large_top_value(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    fake_tracer_holder = {}
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "99999"])
+
+    fake_tracer = fake_tracer_holder["instance"]
+    assert exit_code == 0
+    assert fake_tracer.show_results_calls == [99999]
 
 
 def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace_data, capsys):
