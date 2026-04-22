@@ -9,7 +9,6 @@ from rich.table import Table
 from rich import print
 from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict
 from re import Pattern
-from pathlib import Path
 from types import FrameType
 from dataclasses import dataclass, field
 
@@ -22,10 +21,10 @@ class TracerMetadata:
 
 @dataclass
 class FunctionDataBase:
-    name: str | None = None
-    total_time: float | None = None
-    call_count: int | None = None
-    avg_time: float | None = None
+    name: str = None
+    total_time: float = None
+    call_count: int = None
+    avg_time: float = None
     callees: set[str] = field(default_factory=set)
 
 
@@ -35,7 +34,7 @@ class FunctionData(FunctionDataBase):
 
 @dataclass
 class AggFunctionData(FunctionDataBase):
-    def add(self, trace: FunctionData) -> None:
+    def add(self, trace: FunctionDataBase) -> None:
         if self.name is None:
             self.name = trace.name
         elif trace.name != self.name:
@@ -68,7 +67,7 @@ class TracerData:
     def from_dict(cls, data: Dict[str, Any]) -> "TracerData":
         return cls(
             metadata=TracerMetadata(**data["metadata"]),
-            functions=[FunctionData(**f) for f in data["functions"]],
+            functions=[FunctionDataBase(**f) for f in data["functions"]],
         )
 
 class Tracer:
@@ -242,13 +241,13 @@ class Tracer:
             )
 
             for child_key, count in sorted_children:
-                total_time = self._func_time[child_key]
+                _total_time = self._func_time[child_key]
                 # Detect recursion to prevent infinite loops in the tree
                 if child_key in current_path:
                     parent_node.add(f"[red]↻ {child_key}[/] ({count}x)")
                     continue
 
-                node_text = f"{child_key} [dim]({count}x, {total_time:.4f}s)[/]"
+                node_text = f"{child_key} [dim]({count}x, {_total_time:.4f}s)[/]"
                 child_node = parent_node.add(node_text)
                 add_nodes(child_node, child_key, current_path | {child_key})
 

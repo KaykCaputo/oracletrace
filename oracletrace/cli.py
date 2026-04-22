@@ -1,22 +1,19 @@
 import re
 import sys
 import os
+import csv
 import json
 import runpy
-import csv
+from re import Pattern
 from dataclasses import asdict
 from collections import defaultdict
-
-from .tracer import Tracer, TracerData, TracerMetadata, AggFunctionData
-from .compare import compare_traces, ComparisonData
-from typing import List, Dict, Any, Optional
-from re import Pattern
-from argparse import ArgumentParser, Namespace
 from importlib.metadata import version
+from typing import List, Dict, Optional
+from argparse import ArgumentParser, Namespace
+
 from .tracer import Tracer, TracerData
 from .compare import compare_traces, ComparisonData
 from .reporters import generate_html_report
-
 
 def main() -> int:
     module_name = __name__.split(".")[0]
@@ -120,10 +117,10 @@ def main() -> int:
 
     tracer, data = run_trace()
 
-    runs = int(args.repeat)
+    runs: int = int(args.repeat)
     if runs > 1:
-        total_time = 0
-        tracer_function_aggs = defaultdict(AggFunctionData)
+        total_time: float = 0
+        tracer_function_aggs: Dict[str, AggFunctionData] = defaultdict(AggFunctionData)
         for _ in range(runs):
             # Start tracing, run the script, then stop
             tracer, data = run_trace()
@@ -132,7 +129,7 @@ def main() -> int:
                 tracer_function_aggs[function_data.name].add(function_data)
                 total_time += function_data.total_time
 
-        tracer_agg = TracerData(
+        tracer_agg: TracerData = TracerData(
             metadata=TracerMetadata(
                 root_path=data.metadata.root_path,
                 total_functions=len(tracer_function_aggs),
