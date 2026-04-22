@@ -2,7 +2,7 @@ import json
 import importlib
 import sys
 from pathlib import Path
-from oracletrace.tracer import TracerData, FunctionData, TracerMetadata
+from oracletrace.tracer import TracerData, FunctionData, TracerMetadata, FunctionDataBase
 from oracletrace.compare import ComparisonData
 from dataclasses import asdict
 import pytest
@@ -16,6 +16,11 @@ cli = importlib.import_module("oracletrace.cli")
 assert str(REPO_ROOT / "oracletrace") in str(Path(cli.__file__).resolve())
 
 
+def set_default(obj):
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError
+
 @pytest.fixture
 def trace_data() -> TracerData:
     return TracerData(
@@ -25,14 +30,14 @@ def trace_data() -> TracerData:
             root_path = str(REPO_ROOT) 
         ),
         functions = [
-            FunctionData(
+            FunctionDataBase(
                 name = "foo",
                 total_time = 3.033,
                 call_count = 3,
                 avg_time = 1.011,
                 callees=[]
             ),
-            FunctionData(
+            FunctionDataBase(
                 name = "bar",
                 total_time = 2.0,
                 call_count = 2,
@@ -56,14 +61,14 @@ def baseline_trace_data() -> TracerData:
                 total_time = 1.5,
                 call_count = 3,
                 avg_time = 0.5,
-                callees=[]
+                callees=set()
             ),
             FunctionData(
                 name = "bar",
                 total_time = 2.0,
                 call_count = 2,
                 avg_time = 1.0,
-                callees=[]
+                callees=set()
             )
         ]
     )
@@ -340,7 +345,7 @@ def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
     compare_file = tmp_path / "baseline.json"
-    compare_file.write_text(json.dumps(asdict(empty_trace_data)), encoding="utf-8")
+    compare_file.write_text(json.dumps(asdict(empty_trace_data), default=set_default), encoding="utf-8")
 
     monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, empty_trace_data))
     monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
@@ -376,7 +381,7 @@ def test_main_returns_0_when_no_regression(monkeypatch, tmp_path, trace_data):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
     compare_file = tmp_path / "baseline.json"
-    compare_file.write_text(json.dumps(asdict(trace_data)), encoding="utf-8")
+    compare_file.write_text(json.dumps(asdict(trace_data), default=set_default), encoding="utf-8")
 
     monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
     monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
@@ -406,7 +411,7 @@ def test_main_shows_only_regressions(monkeypatch, tmp_path, trace_data, baseline
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
     compare_file = tmp_path / "baseline.json"
-    compare_file.write_text(json.dumps(asdict(baseline_trace_data)), encoding="utf-8")
+    compare_file.write_text(json.dumps(asdict(baseline_trace_data), default=set_default), encoding="utf-8")
     
     monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
     monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
