@@ -6,7 +6,7 @@ import runpy
 import csv
 from collections import defaultdict
 
-from .tracer import Tracer, TracerData, TracerMetadata, AggFunctionData
+from .tracer import Tracer, TracerData, TracerMetadata, FunctionData
 from .compare import compare_traces, ComparisonData
 from typing import List, Dict, Optional
 from re import Pattern
@@ -109,13 +109,16 @@ def main() -> int:
     runs: int = int(args.repeat)
     if runs > 1:
         total_time: float = 0
-        tracer_function_aggs: Dict[str, AggFunctionData] = defaultdict(AggFunctionData)
+        tracer_function_aggs: Dict[str, FunctionData] = {}
         for _ in range(runs):
             # Start tracing, run the script, then stop
             tracer, data = run_trace()
 
             for function_data in data.functions:
-                tracer_function_aggs[function_data.name].add(function_data)
+                if tracer_function_aggs.get(function_data.name) is None:
+                    tracer_function_aggs[function_data.name] = function_data
+                else:
+                    tracer_function_aggs[function_data.name].add(function_data)
                 total_time += function_data.total_time
 
         tracer_agg: TracerData = TracerData(

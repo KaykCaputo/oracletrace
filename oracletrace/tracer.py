@@ -5,7 +5,7 @@ from collections import defaultdict
 from rich.tree import Tree
 from rich.table import Table
 from rich import print
-from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict
+from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
 from re import Pattern
 from types import FrameType
 from dataclasses import dataclass, field
@@ -18,54 +18,32 @@ class TracerMetadata:
     total_execution_time: float
 
 @dataclass
-class FunctionDataBase:
-    name: str = None
-    total_time: float = None
-    call_count: int = None
-    avg_time: float = None
+class FunctionData:
+    name: str
+    total_time: float
+    call_count: int
+    avg_time: float
     callees: set[str] = field(default_factory=set)
 
-
-@dataclass
-class FunctionData(FunctionDataBase):
-    pass
-
-@dataclass
-class AggFunctionData(FunctionDataBase):
-    def add(self, trace: FunctionDataBase) -> None:
-        if self.name is None:
-            self.name = trace.name
-        elif trace.name != self.name:
+    def add(self, trace: type[Self]) -> None:
+        if trace.name != self.name:
             return
 
         self.callees.update(trace.callees)
-
-        if self.total_time is None:
-            self.total_time = trace.total_time
-        else:
-            self.total_time = (self.total_time + trace.total_time) / 2
-
-        if self.call_count is None:
-            self.call_count = trace.call_count
-        else:
-            self.call_count = (self.call_count + trace.call_count) // 2
-
-        if self.avg_time is None:
-            self.avg_time = trace.avg_time
-        else:
-            self.avg_time = (self.avg_time + trace.avg_time) / 2
-
+        self.total_time = (self.total_time + trace.total_time) / 2
+        self.call_count = (self.call_count + trace.call_count) // 2
+        self.avg_time = (self.avg_time + trace.avg_time) / 2
 
 @dataclass
 class TracerData:
     metadata: TracerMetadata
-    functions: List[FunctionDataBase]
+    functions: List[FunctionData]
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TracerData":
         return cls(
             metadata=TracerMetadata(**data["metadata"]),
-            functions=[FunctionDataBase(**f) for f in data["functions"]],
+            functions=[FunctionData(**f) for f in data["functions"]],
         )
 
 class Tracer:

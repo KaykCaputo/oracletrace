@@ -2,7 +2,7 @@ import json
 import importlib
 import sys
 from pathlib import Path
-from oracletrace.tracer import TracerData, FunctionData, TracerMetadata, FunctionDataBase
+from oracletrace.tracer import TracerData, FunctionData, TracerMetadata, FunctionData
 from oracletrace.compare import ComparisonData
 from dataclasses import asdict
 import pytest
@@ -30,14 +30,14 @@ def trace_data() -> TracerData:
             root_path = str(REPO_ROOT) 
         ),
         functions = [
-            FunctionDataBase(
+            FunctionData(
                 name = "foo",
                 total_time = 3.033,
                 call_count = 3,
                 avg_time = 1.011,
                 callees=[]
             ),
-            FunctionDataBase(
+            FunctionData(
                 name = "bar",
                 total_time = 2.0,
                 call_count = 2,
