@@ -9,7 +9,8 @@ from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict
 from re import Pattern
 from pathlib import Path
 from types import FrameType
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
 
 @dataclass
 class TracerMetadata:
@@ -18,17 +19,48 @@ class TracerMetadata:
     total_execution_time: float
 
 @dataclass
-class FunctionData:
-    name: str
-    total_time: float
-    call_count: int
-    avg_time: float
-    callees: List[str]
+class FunctionDataBase:
+    name: str | None = None
+    total_time: float | None = None
+    call_count: int | None = None
+    avg_time: float | None = None
+    callees: set[str] = field(default_factory=set)
+
+
+@dataclass
+class FunctionData(FunctionDataBase):
+    pass
+
+@dataclass
+class AggFunctionData(FunctionDataBase):
+    def add(self, trace: FunctionData) -> None:
+        if self.name is None:
+            self.name = trace.name
+        elif trace.name != self.name:
+            return
+
+        self.callees.update(trace.callees)
+
+        if self.total_time is None:
+            self.total_time = trace.total_time
+        else:
+            self.total_time = (self.total_time + trace.total_time) / 2
+
+        if self.call_count is None:
+            self.call_count = trace.call_count
+        else:
+            self.call_count = (self.call_count + trace.call_count) // 2
+
+        if self.avg_time is None:
+            self.avg_time = trace.avg_time
+        else:
+            self.avg_time = (self.avg_time + trace.avg_time) / 2
+
 
 @dataclass
 class TracerData:
     metadata: TracerMetadata
-    functions: List[FunctionData]
+    functions: List[FunctionDataBase]
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TracerData":
@@ -207,14 +239,13 @@ class Tracer:
         for key, total_time in self._func_time.items():
             calls = self._func_calls[key]
             avg_time = total_time / calls if calls else 0
-
             functions.append(
                 FunctionData(
                     name = key,
                     total_time = total_time,
                     call_count = calls,
                     avg_time = avg_time,
-                    callees = list(self._call_map.get(key, {}).keys()),
+                    callees = {k for k in self._call_map.get(key, {}).keys()},
                 )
             )
 

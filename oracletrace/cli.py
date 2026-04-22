@@ -4,7 +4,9 @@ import os
 import json
 import runpy
 import csv
-from .tracer import Tracer, TracerData
+from collections import defaultdict
+
+from .tracer import Tracer, TracerData, TracerMetadata, AggFunctionData
 from .compare import compare_traces, ComparisonData
 from typing import List, Dict, Any, Optional
 from re import Pattern
@@ -48,6 +50,14 @@ def main() -> int:
         action="store_true",
         help="Hide functions which didn't run slower than baseline. Use with --compare"
     )
+
+    parser.add_argument(
+        "--repeat",
+        metavar="NUMBER",
+        help="Number of times to run the trace against the previous trace JSON",
+        default=1
+    )
+
     args: Namespace = parser.parse_args()
 
     target: str = args.target
@@ -71,26 +81,60 @@ def main() -> int:
             print(f"Regex error: {pattern} -> {e}")
             return 1
 
-    # Start tracing, run the script, then stop
-    tracer: Tracer = Tracer(root, ignore_patterns=ignore_patterns)
-    tracer.start()
-    try:
-        runpy.run_path(target, run_name="__main__")
-    finally:
-        tracer.stop()
+    def run_trace():
+        _tracer: Tracer = Tracer(root, ignore_patterns=ignore_patterns)
 
-    data: TracerData = tracer.get_trace_data()
+        _tracer.start()
+        try:
+            runpy.run_path(target, run_name="__main__")
+        finally:
+            _tracer.stop()
+
+        _data: TracerData = _tracer.get_trace_data()
+
+        return _tracer, _data
+
+    tracer, data = run_trace()
+
+    runs = int(args.repeat)
+    if runs > 1:
+        total_time = 0
+        tracer_function_aggs = defaultdict(AggFunctionData)
+        for _ in range(runs):
+            # Start tracing, run the script, then stop
+            tracer, data = run_trace()
+
+            for function_data in data.functions:
+                tracer_function_aggs[function_data.name].add(function_data)
+                total_time += function_data.total_time
+
+        tracer_agg = TracerData(
+            metadata=TracerMetadata(
+                root_path=data.metadata.root_path,
+                total_functions=len(tracer_function_aggs),
+                total_execution_time=total_time
+            ),
+            functions=list(tracer_function_aggs.values())
+        )
+
+        data = tracer_agg
+
+    def set_default(obj):
+        if isinstance(obj, set):
+            return list(obj)
+        raise TypeError
 
     # Save json
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
-            json.dump(asdict(data), f, indent=4)
+            json.dump(asdict(data), f, indent=4, default=set_default)
 
     # Display the analysis
-    if args.top:
-        tracer.show_results(int(args.top[0]))
-    else:
-        tracer.show_results(None)
+    if runs <= 1:
+        if args.top:
+            tracer.show_results(int(args.top[0]))
+        else:
+            tracer.show_results(None)
 
     # Export as csv
     if args.csv:
@@ -123,7 +167,7 @@ def main() -> int:
             f"Build failed: performance regression above {args.threshold:.2f}% detected."
             )
             return 2
-        
+
 
     return 0
 
