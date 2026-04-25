@@ -46,6 +46,10 @@ def compare_traces(
         new_time: float = new.total_time
 
         if old_time == 0:
+            if new_time == 0:
+                print(f"{name} [yellow](no signal)[/]")
+                continue
+            print(f"{name} [yellow](no baseline)[/]")
             continue
 
         diff: float = new_time - old_time
