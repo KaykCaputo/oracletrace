@@ -61,7 +61,7 @@ def compare_traces(
             f"{name}\n"
             f"    total_time: {old_time:.4f}s → {new_time:.4f}s "
             f"[{color}]({percent:+.2f}%)[/]\n"
-        ) if not show_only_regressions or diff > 0.0 else ...
+        ) if not show_only_regressions or percent > threshold else ...
         
         
         if percent > threshold:
