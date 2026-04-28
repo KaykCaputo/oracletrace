@@ -627,6 +627,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#print-only-regressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Print only regressions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ignore-noisy-functions-or-files" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -778,6 +789,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../changelogs/v2-0-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v2.0.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../changelogs/v2-0-0/" class="md-nav__link">
         
   
@@ -892,6 +931,17 @@
     <span class="md-ellipsis">
       
         Fail the run on regression
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#print-only-regressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Print only regressions
       
     </span>
   </a>
@@ -1026,28 +1076,31 @@
 <li><code>0</code> when no regression exceeds threshold</li>
 <li><code>2</code> when at least one regression exceeds threshold</li>
 </ul>
+<h2 id="print-only-regressions">Print only regressions<a class="headerlink" href="#print-only-regressions" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--only-regressions
+</code></pre></div>
 <h2 id="ignore-noisy-functions-or-files">Ignore noisy functions or files<a class="headerlink" href="#ignore-noisy-functions-or-files" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
 </code></pre></div>
 <p>Use this to remove known noisy paths/functions from summaries and call flow.</p>
 <h2 id="focus-on-top-offenders">Focus on top offenders<a class="headerlink" href="#focus-on-top-offenders" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <p>Useful when you want a concise summary of the heaviest functions.</p>
 <h2 id="lightweight-ci-check-pattern">Lightweight CI check pattern<a class="headerlink" href="#lightweight-ci-check-pattern" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># one-time baseline (store artifact)</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># in CI pipeline</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># one-time baseline (store artifact)</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># in CI pipeline</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <p>Use this when you want a simple, scriptable guardrail before merging changes.</p>
 <h2 id="read-the-logic-flow-tree">Read the logic flow tree<a class="headerlink" href="#read-the-logic-flow-tree" title="Permanent link">&para;</a></h2>
 <p>Typical output shape:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>&lt;module&gt;
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>└── app.py:main
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    ├── app.py:load_data
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    └── app.py:process_data
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>&lt;module&gt;
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>└── app.py:main
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    ├── app.py:load_data
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    └── app.py:process_data
 </code></pre></div>
 <p>This is useful for spotting unexpected call paths after feature updates.</p>
 <h2 id="tips-for-accurate-comparisons">Tips for accurate comparisons<a class="headerlink" href="#tips-for-accurate-comparisons" title="Permanent link">&para;</a></h2>

@@ -640,6 +640,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#-only-regressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ---only-regressions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#-ignore" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -851,6 +862,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../changelogs/v2-0-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v2.0.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../changelogs/v2-0-0/" class="md-nav__link">
         
   
@@ -1012,6 +1051,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#-only-regressions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ---only-regressions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#-ignore" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1130,7 +1180,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--json<span class="w"> </span>OUTPUT.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--csv<span class="w"> </span>OUTPUT.csv<span class="o">]</span><span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--ignore<span class="w"> </span>REGEX<span class="w"> </span><span class="o">[</span>REGEX<span class="w"> </span>...<span class="o">]]</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--top<span class="w"> </span>NUMBER<span class="o">]</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--fail-on-regression<span class="o">]</span><span class="w"> </span><span class="o">[</span>--threshold<span class="w"> </span>PERCENT<span class="o">]</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--fail-on-regression<span class="o">]</span><span class="w"> </span><span class="o">[</span>--threshold<span class="w"> </span>PERCENT<span class="o">]</span><span class="w"> </span><span class="o">[</span>--only-regressions<span class="o">]</span>
 </code></pre></div>
 <h2 id="required-argument">Required argument<a class="headerlink" href="#required-argument" title="Permanent link">&para;</a></h2>
 <h3 id="target"><code>target</code><a class="headerlink" href="#target" title="Permanent link">&para;</a></h3>
@@ -1169,15 +1219,21 @@
 <p>Default value: <code>5.0</code></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
 </code></pre></div>
+<h3 id="-only-regressions"><code>---only-regressions</code><a class="headerlink" href="#-only-regressions" title="Permanent link">&para;</a></h3>
+<p>Shows only the regressions in the diff output when comparing traces.</p>
+<p>Use with <code>--compare</code>.</p>
+<p>Default value: False</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--only-regressions
+</code></pre></div>
 <h3 id="-ignore"><code>--ignore</code><a class="headerlink" href="#-ignore" title="Permanent link">&para;</a></h3>
 <p>Specify file paths and function names to ignore using regular expression syntax.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
 </code></pre></div>
 <p>The ignored files and functions will not appear in the summary table neither the logic flow output.</p>
 <p>Ignore matching is applied on function keys in the form <code>relative_path.py:qualified_function_name</code>.</p>
 <h3 id="-top"><code>--top</code><a class="headerlink" href="#-top" title="Permanent link">&para;</a></h3>
 <p>Limit the summary table output to a maximum number of results.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <h2 id="exit-behavior">Exit behavior<a class="headerlink" href="#exit-behavior" title="Permanent link">&para;</a></h2>
 <p>OracleTrace returns a non-zero exit code when:</p>
@@ -1189,12 +1245,12 @@
 <p>Non-zero exit codes can also happen when the target script fails at runtime or when the compare JSON file cannot be parsed.</p>
 <h2 id="typical-workflows">Typical workflows<a class="headerlink" href="#typical-workflows" title="Permanent link">&para;</a></h2>
 <h3 id="local-development-workflow">Local development workflow<a class="headerlink" href="#local-development-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># change code</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># change code</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
 </code></pre></div>
 <h3 id="ci-regression-workflow">CI regression workflow<a class="headerlink" href="#ci-regression-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <p>Store <code>baseline.json</code> as a known-good artifact.</p>
 <h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h2>

@@ -2,30 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
     </url>
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/cli-reference/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
     </url>
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/examples/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
     </url>
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/installation/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
     </url>
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/quickstart/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
     </url>
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/changelogs/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
     </url>
     <url>
          <loc>https://kaykcaputo.github.io/oracletrace/changelogs/v2-0-0/</loc>
-         <lastmod>2026-04-09</lastmod>
+         <lastmod>2026-04-28</lastmod>
+    </url>
+    <url>
+         <loc>https://kaykcaputo.github.io/oracletrace/changelogs/v2-0-1/</loc>
+         <lastmod>2026-04-28</lastmod>
     </url>
 </urlset>
