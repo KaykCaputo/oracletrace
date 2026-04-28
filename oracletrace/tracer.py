@@ -5,11 +5,11 @@ from collections import defaultdict
 from rich.tree import Tree
 from rich.table import Table
 from rich import print
-from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict
+from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
 from re import Pattern
-from pathlib import Path
 from types import FrameType
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
 
 @dataclass
 class TracerMetadata:
@@ -23,7 +23,16 @@ class FunctionData:
     total_time: float
     call_count: int
     avg_time: float
-    callees: List[str]
+    callees: set[str] = field(default_factory=set)
+
+    def add(self, trace: type[Self]) -> None:
+        if trace.name != self.name:
+            return
+
+        self.callees.update(trace.callees)
+        self.total_time = (self.total_time + trace.total_time) / 2
+        self.call_count = (self.call_count + trace.call_count) // 2
+        self.avg_time = (self.avg_time + trace.avg_time) / 2
 
 @dataclass
 class TracerData:
@@ -188,13 +197,13 @@ class Tracer:
             )
 
             for child_key, count in sorted_children:
-                total_time = self._func_time[child_key]
+                _total_time = self._func_time[child_key]
                 # Detect recursion to prevent infinite loops in the tree
                 if child_key in current_path:
                     parent_node.add(f"[red]↻ {child_key}[/] ({count}x)")
                     continue
 
-                node_text = f"{child_key} [dim]({count}x, {total_time:.4f}s)[/]"
+                node_text = f"{child_key} [dim]({count}x, {_total_time:.4f}s)[/]"
                 child_node = parent_node.add(node_text)
                 add_nodes(child_node, child_key, current_path | {child_key})
 
@@ -207,14 +216,13 @@ class Tracer:
         for key, total_time in self._func_time.items():
             calls = self._func_calls[key]
             avg_time = total_time / calls if calls else 0
-
             functions.append(
                 FunctionData(
                     name = key,
                     total_time = total_time,
                     call_count = calls,
                     avg_time = avg_time,
-                    callees = list(self._call_map.get(key, {}).keys()),
+                    callees = {k for k in self._call_map.get(key, {}).keys()},
                 )
             )
 
