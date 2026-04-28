@@ -46,6 +46,10 @@ def compare_traces(
         new_time: float = new.total_time
 
         if old_time == 0:
+            if new_time == 0:
+                print(f"{name} [yellow](no signal)[/]")
+                continue
+            print(f"{name} [yellow](no baseline)[/]")
             continue
 
         diff: float = new_time - old_time
@@ -57,7 +61,7 @@ def compare_traces(
             f"{name}\n"
             f"    total_time: {old_time:.4f}s → {new_time:.4f}s "
             f"[{color}]({percent:+.2f}%)[/]\n"
-        ) if not show_only_regressions or diff > 0.0 else ...
+        ) if not show_only_regressions or percent > threshold else ...
         
         
         if percent > threshold:
