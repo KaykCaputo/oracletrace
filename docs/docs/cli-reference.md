@@ -15,6 +15,7 @@ oracletrace <target> [--json OUTPUT.json] [--csv OUTPUT.csv] [--compare BASELINE
 oracletrace <target> [--ignore REGEX [REGEX ...]]
 oracletrace <target> [--top NUMBER]
 oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
+oracletrace --version
 ```
 
 ## Required argument
@@ -115,6 +116,14 @@ Limit the summary table output to a maximum number of results.
 
 ```bash
 oracletrace my_app.py --top 10
+```
+
+### `--version`
+
+Prints version information and exit with a zero code.
+
+```bash
+oracletrace --version
 ```
 
 ## Exit behavior

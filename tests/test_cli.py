@@ -427,3 +427,12 @@ def test_main_shows_only_regressions(monkeypatch, tmp_path, trace_data, baseline
     assert f"    total_time: {baseline_trace_data.functions[0].total_time:.4f}s → {trace_data.functions[0].total_time:.4f}s" in captured.out
     assert f"(+{102.2:.2f}%)\n" in captured.out
     assert f"{trace_data.functions[1].name}\n" not in captured.out
+
+def test_main_prints_version_exits_0(monkeypatch, trace_data, capsys):
+    module_name = "oracletrace"
+    with pytest.raises(SystemExit):
+        exit_code = _run_cli(monkeypatch,["oracletrace","--version",])
+
+        captured = capsys.readouterr()
+        assert exit_code == 0
+        assert f"{module_name} {importlib.metadata.version(module_name)}" in captured.out

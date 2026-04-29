@@ -11,10 +11,13 @@ from re import Pattern
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from dataclasses import asdict
+from importlib.metadata import version
 
 
 def main() -> int:
+    module_name = __name__.split(".")[0]
     parser: ArgumentParser  = ArgumentParser(
+        prog=module_name,
         description="OracleTrace - Lightweight execution tracer for Python projects"
     )
     parser.add_argument("target", help="Python script to trace")
@@ -47,6 +50,13 @@ def main() -> int:
         "--only-regressions",
         action="store_true",
         help="Hide functions which didn't run slower than baseline. Use with --compare"
+    )
+    
+    parser.add_argument(
+        "--version",
+        action="version",
+        help="Print version information then exit with a zero code",
+        version=f"%(prog)s {version(module_name)}"
     )
     args: Namespace = parser.parse_args()
 
