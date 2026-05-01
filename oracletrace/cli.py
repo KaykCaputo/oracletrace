@@ -4,14 +4,14 @@ import os
 import json
 import runpy
 import csv
-from .tracer import Tracer, TracerData
-from .compare import compare_traces, ComparisonData
+from dataclasses import asdict
 from typing import List, Dict, Any, Optional
 from re import Pattern
 from argparse import ArgumentParser, Namespace
-from pathlib import Path
-from dataclasses import asdict
 from importlib.metadata import version
+from .tracer import Tracer, TracerData
+from .compare import compare_traces, ComparisonData
+from .reporters import generate_html_report
 
 
 def main() -> int:
@@ -24,6 +24,7 @@ def main() -> int:
     parser.add_argument("--json", help="Export trace result to JSON file")
     parser.add_argument("--compare", help="Compare against previous trace JSON")
     parser.add_argument("--csv", help="Export trace result to CSV file")
+    parser.add_argument("--html", help="Export trace result to interactive HTML file")
     parser.add_argument(
         "--ignore",
         metavar="REGEX",
@@ -125,6 +126,11 @@ def main() -> int:
                     "calls":      fn.call_count,
                     "avg_time":   fn.avg_time,
                 })
+
+    # Generare a report as html
+    if args.html:
+        generate_html_report(data, args.html)
+        print(f"HTML report generated: {os.path.abspath(args.html)}")
 
     comparison_result: Optional[ComparisonData] = None
 
