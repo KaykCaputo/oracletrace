@@ -11,7 +11,7 @@ Complete command reference for OracleTrace.
 ## Command syntax
 
 ```bash
-oracletrace <target> [--json OUTPUT.json] [--csv OUTPUT.csv] [--compare BASELINE.json]
+oracletrace <target> [--json OUTPUT.json] [--csv OUTPUT.csv] [--html OUTPUT.html] [--compare BASELINE.json]
 oracletrace <target> [--ignore REGEX [REGEX ...]]
 oracletrace <target> [--top NUMBER]
 oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
@@ -49,6 +49,16 @@ Exports the trace results to a csv file.
 ```bash
 oracletrace my_app.py --csv run.csv
 ```
+
+### `--html`
+
+Exports the trace results to an interactive HTML file.
+
+```bash
+oracletrace my_app.py --html report.html
+```
+
+The generated report includes a sortable table with function timing data and a call graph visualization.
 
 ### `--compare`
 
