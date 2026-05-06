@@ -136,7 +136,8 @@ Add it to your CI to automatically fail on performance regressions.
 | Flag                   | Description                            |
 | ---------------------- | -------------------------------------- |
 | `--json`               | Export trace to JSON                   |
-| `--csv`               | Export trace to CSV                     |
+| `--csv`                | Export trace to CSV                    |
+| `--html`               | Export trace to html                   |
 | `--compare`            | Compare with another trace             |
 | `--fail-on-regression` | Exit with error if regression detected |
 | `--threshold`          | Regression percentage threshold        |
