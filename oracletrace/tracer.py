@@ -1,4 +1,6 @@
 import sys
+import sysconfig
+import site
 import os
 import time
 from collections import defaultdict
@@ -76,11 +78,31 @@ class Tracer:
         return False
 
     def _is_user_code(self, filename: str) -> bool:
-        # Filter out files not in the project root
-        if not filename.startswith(str(self._root_path)):
+        # Normalize all paths to resolve symlinks
+        filename = os.path.realpath(filename)
+        root_path = os.path.realpath(self._root_path)
+
+        # Check project root
+        if os.path.commonpath([root_path, filename]) != root_path:
             return False
-        # Filter out third-party libraries
-        if "site-packages" in filename or "dist-packages" in filename:
+
+        # Exclude Python stdlib
+        stdlib_path = os.path.realpath(sysconfig.get_path("stdlib"))
+        if os.path.commonpath([stdlib_path, filename]) == stdlib_path:
+            return False
+
+        # Exclude all site-packages
+        site_paths = site.getsitepackages() + [site.getusersitepackages()]
+        normalized_site_paths = [os.path.realpath(p) for p in site_paths]
+        for sp in normalized_site_paths:
+            if os.path.commonpath([sp, filename]) == sp:
+                return False
+
+        # Exclude venv-like directories that may be inside the project root
+        venv_markers = {"venv", ".venv", "env", ".env", "virtualenv"}
+        path_relative_to_root = os.path.relpath(filename, root_path)
+        path_parts = Path(path_relative_to_root).parts
+        if any(part in venv_markers for part in path_parts):
             return False
         return True
 
