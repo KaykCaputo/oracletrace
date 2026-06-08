@@ -23,7 +23,7 @@ OracleTrace is a **git diff for performance.**
 
 Documentation: [https://kaykcaputo.github.io/oracletrace/](https://kaykcaputo.github.io/oracletrace/)
 
-**Featured in:** [PyCoder's Weekly #729](https://pycoders.com/issues/729) • [awesome-debugger](https://github.com/taowen/awesome-debugger) • [awesome-profiling](https://github.com/msaroufim/awesome-profiling)
+**Featured in:** [PyCoder's Weekly #729](https://pycoders.com/issues/729) • [Python技术周刊 #15](https://cloud.tencent.com/developer/article/2671086) • [Python技术周刊 #16](https://cloud.tencent.com/developer/article/2672217) • [awesome-debugger](https://github.com/taowen/awesome-debugger) • [awesome-profiling](https://github.com/msaroufim/awesome-profiling) 
 
 ---
 ### Installation
