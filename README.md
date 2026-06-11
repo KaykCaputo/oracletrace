@@ -143,6 +143,7 @@ Add it to your CI to automatically fail on performance regressions.
 | `--threshold`          | Regression percentage threshold        |
 | `--ignore`             | Ignore functions/files via regex       |
 | `--top`                | Show top N functions                   |
+| `--repeat`             | Repeat the tracing N times             |
 
 ---
 
