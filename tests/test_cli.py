@@ -31,18 +31,18 @@ def trace_data() -> TracerData:
         ),
         functions = [
             FunctionData(
-                name = "foo",
-                total_time = 3.033,
-                call_count = 3,
-                avg_time = 1.011,
-                callees=[]
+                name="foo",
+                total_time=2.0,
+                call_count=1,
+                avg_time=2.0,
+                callees=set(),
             ),
             FunctionData(
-                name = "bar",
-                total_time = 2.0,
-                call_count = 2,
-                avg_time = 1.0,
-                callees=[]
+                name="bar",
+                total_time=2.0,
+                call_count=2,
+                avg_time=1.0,
+                callees=set()
             )
         ]
     )
@@ -179,7 +179,7 @@ def test_main_runs_trace_and_exports_json_and_csv(monkeypatch, tmp_path, trace_d
 
     csv_text = csv_output.read_text(encoding="utf-8")
     assert "function,total_time,calls,avg_time" in csv_text
-    assert "foo,3.033,3,1.011" in csv_text
+    assert "foo,2.0,1,2.0" in csv_text
     assert "bar,2.0,2,1.0" in csv_text
 
     assert sys.path[0] == str(target.parent.resolve())
@@ -430,7 +430,7 @@ def test_main_shows_only_regressions(monkeypatch, tmp_path, trace_data, baseline
     captured = capsys.readouterr()
     assert f"{trace_data.functions[0].name}\n" in captured.out
     assert f"    total_time: {baseline_trace_data.functions[0].total_time:.4f}s → {trace_data.functions[0].total_time:.4f}s" in captured.out
-    assert f"(+{102.2:.2f}%)\n" in captured.out
+    assert f"(+{33.33:.2f}%)\n" in captured.out
     assert f"{trace_data.functions[1].name}\n" not in captured.out
 
 def test_main_prints_version_exits_0(monkeypatch, trace_data, capsys):
@@ -441,3 +441,153 @@ def test_main_prints_version_exits_0(monkeypatch, trace_data, capsys):
         captured = capsys.readouterr()
         assert exit_code == 0
         assert f"{module_name} {importlib.metadata.version(module_name)}" in captured.out
+
+
+def test_main_repeat_runs_trace_multiple_times(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    tracer_instances = []
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        tracer_instances.append(fake)
+        return fake
+
+    run_count = 0
+
+    def fake_run_path(*args, **kwargs):
+        nonlocal run_count
+        run_count += 1
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", fake_run_path)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            str(target),
+            "--repeat",
+            "3",
+        ],
+    )
+
+    assert exit_code == 0
+
+    assert run_count == 4
+
+    assert len(tracer_instances) == 4
+    assert all(t.started for t in tracer_instances)
+    assert all(t.stopped for t in tracer_instances)
+    
+def test_main_repeat_aggregates_function_times(monkeypatch, tmp_path):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    trace_data = TracerData(
+        metadata=TracerMetadata(
+            total_execution_time=1.0,
+            total_functions=1,
+            root_path=str(REPO_ROOT),
+        ),
+        functions=[
+            FunctionData(
+                name="foo",
+                total_time=2.0,
+                call_count=1,
+                avg_time=2.0,
+                callees=set(),
+            )
+        ],
+    )
+
+    def tracer_factory(root, ignore_patterns):
+        return FakeTracer(root, ignore_patterns, trace_data)
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    output_json = tmp_path / "trace.json"
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            str(target),
+            "--repeat",
+            "3",
+            "--json",
+            str(output_json),
+        ],
+    )
+
+    assert exit_code == 0
+
+    exported = TracerData.from_dict(
+        json.loads(output_json.read_text())
+    )
+
+    foo = exported.functions[0]
+
+    assert foo.total_time == 8.0
+    assert foo.call_count == 4
+    
+def test_main_repeat_does_not_call_show_results(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    fake_tracer_holder = {}
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            str(target),
+            "--repeat",
+            "2",
+        ],
+    )
+
+    assert exit_code == 0
+
+    fake_tracer = fake_tracer_holder["instance"]
+
+    assert fake_tracer.show_results_calls == []
+    
+def test_main_repeat_one_behaves_like_default(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    fake_tracer_holder = {}
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            str(target),
+            "--repeat",
+            "1",
+        ],
+    )
+
+    assert exit_code == 0
+
+    fake_tracer = fake_tracer_holder["instance"]
+    assert fake_tracer.show_results_calls == [None]    

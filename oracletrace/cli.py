@@ -12,7 +12,7 @@ from argparse import ArgumentParser, Namespace
 
 from .reporters import generate_html_report
 from .compare import compare_traces, ComparisonData
-from .tracer import Tracer, TracerData, TracerMetadata
+from .tracer import Tracer, TracerData, TracerMetadata,FunctionData
 
 def main() -> int:
     module_name = __name__.split(".")[0]

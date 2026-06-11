@@ -28,14 +28,16 @@ class FunctionData:
     avg_time: float
     callees: set[str] = field(default_factory=set)
 
-    def add(self, trace: type[Self]) -> None:
+    def add(self, trace: Self) -> None:
         if trace.name != self.name:
             return
 
         self.callees.update(trace.callees)
-        self.total_time = (self.total_time + trace.total_time) / 2
-        self.call_count = (self.call_count + trace.call_count) // 2
-        self.avg_time = (self.avg_time + trace.avg_time) / 2
+        self.total_time += trace.total_time
+        self.call_count += trace.call_count
+
+        if self.call_count:
+            self.avg_time = self.total_time / self.call_count
 
 @dataclass
 class TracerData:
@@ -46,7 +48,15 @@ class TracerData:
     def from_dict(cls, data: Dict[str, Any]) -> "TracerData":
         return cls(
             metadata=TracerMetadata(**data["metadata"]),
-            functions=[FunctionData(**f) for f in data["functions"]],
+            functions=[
+                FunctionData(
+                    **{
+                        **f,
+                        "callees": set(f.get("callees", [])),
+                    }
+                )
+                for f in data["functions"]
+            ],
         )
 
 class Tracer:
