@@ -10,9 +10,9 @@ from importlib.metadata import version
 from typing import List, Dict, Optional
 from argparse import ArgumentParser, Namespace
 
-from .tracer import Tracer, TracerData
-from .compare import compare_traces, ComparisonData
 from .reporters import generate_html_report
+from .compare import compare_traces, ComparisonData
+from .tracer import Tracer, TracerData, TracerMetadata
 
 def main() -> int:
     module_name = __name__.split(".")[0]
@@ -155,7 +155,7 @@ def main() -> int:
     # Display the analysis
     if runs <= 1:
         if args.top:
-            tracer.show_results(int(args.top[0]))
+            tracer.show_results(args.top)
         else:
             tracer.show_results(None)
 

@@ -1,17 +1,18 @@
-import sys
-import sysconfig
-import site
 import os
+import sys
+import site
 import time
+import sysconfig
+from re import Pattern
+from pathlib import Path
+from types import FrameType
 from collections import defaultdict
+from dataclasses import dataclass, field
+from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
+
 from rich.tree import Tree
 from rich.table import Table
 from rich import print
-from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
-from re import Pattern
-from types import FrameType
-from dataclasses import dataclass, field
-
 
 @dataclass
 class TracerMetadata:
