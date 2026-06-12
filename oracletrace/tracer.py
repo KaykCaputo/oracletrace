@@ -6,13 +6,14 @@ import sysconfig
 from re import Pattern
 from pathlib import Path
 from types import FrameType
+from statistics import median
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
 
+from rich import print
 from rich.tree import Tree
 from rich.table import Table
-from rich import print
 
 @dataclass
 class TracerMetadata:
@@ -57,6 +58,30 @@ class TracerData:
                 )
                 for f in data["functions"]
             ],
+        )
+
+@dataclass
+class FunctionAggregate:
+    name: str
+    total_times: List[float] = field(default_factory=list)
+    call_counts: List[int] = field(default_factory=list)
+    callees: set[str] = field(default_factory=set)
+
+    def add(self, data: FunctionData) -> None:
+        self.total_times.append(data.total_time)
+        self.call_counts.append(data.call_count)
+        self.callees.update(data.callees)
+
+    def to_function_data(self) -> FunctionData:
+        total_time = median(self.total_times)
+        call_count = int(median(self.call_counts))
+
+        return FunctionData(
+            name=self.name,
+            total_time=total_time,
+            call_count=call_count,
+            avg_time=total_time / call_count if call_count else 0,
+            callees=self.callees,
         )
 
 class Tracer:

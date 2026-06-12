@@ -475,9 +475,9 @@ def test_main_repeat_runs_trace_multiple_times(monkeypatch, tmp_path, trace_data
 
     assert exit_code == 0
 
-    assert run_count == 4
+    assert run_count == 3
 
-    assert len(tracer_instances) == 4
+    assert len(tracer_instances) == 3
     assert all(t.started for t in tracer_instances)
     assert all(t.stopped for t in tracer_instances)
     
@@ -530,8 +530,8 @@ def test_main_repeat_aggregates_function_times(monkeypatch, tmp_path):
 
     foo = exported.functions[0]
 
-    assert foo.total_time == 8.0
-    assert foo.call_count == 4
+    assert foo.total_time == 2.0
+    assert foo.call_count == 1
     
 def test_main_repeat_does_not_call_show_results(monkeypatch, tmp_path, trace_data):
     target = tmp_path / "target.py"

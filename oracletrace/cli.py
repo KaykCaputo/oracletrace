@@ -1,22 +1,21 @@
+import os
 import re
 import sys
-import os
 import csv
 import json
 import runpy
-import csv
 import argparse
-from dataclasses import asdict
-from typing import List, Dict, Any, Optional, Tuple
 from re import Pattern
+from statistics import median
 from dataclasses import asdict
 from importlib.metadata import version
-from typing import List, Dict, Optional, Tuple
 from argparse import ArgumentParser, Namespace
+from typing import List, Dict, Any, Optional, Tuple
 
 from .reporters import generate_html_report
 from .compare import compare_traces, ComparisonData
-from .tracer import Tracer, TracerData, TracerMetadata,FunctionData
+from .tracer import Tracer, TracerData, TracerMetadata, FunctionData, FunctionAggregate
+
 
 _MODULE_NAME: str = __name__.split(".")[0]
 
@@ -87,12 +86,24 @@ _BASE_PARSER.add_argument(
     action="store_true",
     help="Hide functions which didn't run slower than baseline. Use with --compare",
 )
+_BASE_PARSER.add_argument(
+    "--repeat",
+    metavar="NUMBER",
+    help="Number of times to repeat the trace run and aggregate results",
+    default=1,
+)
+
+
+def _set_default(obj: Any) -> Any:
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError
 
 
 def _export_results(data: TracerData, args: Namespace) -> None:
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
-            json.dump(asdict(data), f, indent=4)
+            json.dump(asdict(data), f, indent=4, default=_set_default)
 
     if args.csv:
         with open(args.csv, "w", newline="", encoding="utf-8") as f:
@@ -180,21 +191,18 @@ def _run_target() -> int:
         version=f"%(prog)s {version(_MODULE_NAME)}",
     )
 
-    parser.add_argument(
-        "--repeat",
-        metavar="NUMBER",
-        help="Number of times to run the trace against the previous trace JSON",
-        default=1
-    )
-
     args: Namespace = parser.parse_args()
-
     target: str = args.target
 
-    err, tracer = _init_tracer(args)
+    # Validate args before touching the filesystem or starting any tracer
+    top, err = _validate_top(args.top)
     if err is not None:
         return err
-    assert tracer is not None
+    args.top = top
+
+    ignore_patterns, err = _compile_ignore_patterns(args.ignore)
+    if err is not None:
+        return err
 
     if not os.path.exists(target):
         print(f"Target not found: {target}", file=sys.stderr)
@@ -204,63 +212,62 @@ def _run_target() -> int:
     target_dir: str = os.path.dirname(target)
     sys.path.insert(0, target_dir)
 
-    def run_trace():
-        _tracer: Tracer = Tracer(root, ignore_patterns=ignore_patterns)
+    # Capture root once so run_trace() closes over a stable value
+    root: str = os.getcwd()
 
+    def run_trace() -> Tuple[Tracer, TracerData]:
+        _tracer: Tracer = Tracer(root, ignore_patterns=ignore_patterns)
         _tracer.start()
         try:
             runpy.run_path(target, run_name="__main__")
         finally:
             _tracer.stop()
-
-        _data: TracerData = _tracer.get_trace_data()
-
-        return _tracer, _data
-
-    tracer, data = run_trace()
+        return _tracer, _tracer.get_trace_data()
 
     runs: int = int(args.repeat)
+
     if runs > 1:
-        total_time: float = 0
-        tracer_function_aggs: Dict[str, FunctionData] = {}
+        aggs: Dict[str, FunctionAggregate] = {}
+        wall_times: List[float] = []
+        data: TracerData
+
         for _ in range(runs):
-            # Start tracing, run the script, then stop
-            tracer, data = run_trace()
-
+            _, data = run_trace()
+            wall_times.append(data.metadata.total_execution_time)
             for function_data in data.functions:
-                if tracer_function_aggs.get(function_data.name) is None:
-                    tracer_function_aggs[function_data.name] = function_data
-                else:
-                    tracer_function_aggs[function_data.name].add(function_data)
-                total_time += function_data.total_time
+                if function_data.name not in aggs:
+                    aggs[function_data.name] = FunctionAggregate(name=function_data.name)
+                aggs[function_data.name].add(function_data)
 
-        tracer_agg: TracerData = TracerData(
+        data = TracerData(
             metadata=TracerMetadata(
                 root_path=data.metadata.root_path,
-                total_functions=len(tracer_function_aggs),
-                total_execution_time=total_time
+                total_functions=len(aggs),
+                total_execution_time=median(wall_times),
             ),
-            functions=list(tracer_function_aggs.values())
+            functions=[agg.to_function_data() for agg in aggs.values()],
         )
 
-        data = tracer_agg
+        _export_results(data, args)
+        exit_code = _compare_and_fail(data, args)
+        return exit_code if exit_code is not None else 0
+    else:
+        tracer, _ = run_trace()
+        exit_code = _finish_trace(tracer, args)
+        return exit_code if exit_code is not None else 0
 
-    def set_default(obj):
-        if isinstance(obj, set):
-            return list(obj)
-        raise TypeError
 
-    # Save json
-    if args.json:
-        with open(args.json, "w", encoding="utf-8") as f:
-            json.dump(asdict(data), f, indent=4, default=set_default)
-
-    # Display the analysis
-    if runs <= 1:
-        if args.top:
-            tracer.show_results(args.top)
-        else:
-            tracer.show_results(None)
+def _run_command(argv: List[str]) -> int:
+    parser: ArgumentParser = ArgumentParser(
+        prog=f"{_MODULE_NAME} run",
+        description="Run a command with OracleTrace tracing",
+        parents=[_BASE_PARSER],
+    )
+    parser.add_argument(
+        "command",
+        nargs=argparse.REMAINDER,
+        help="Command to run (e.g., pytest). Use -- to separate oracletrace options from the command.",
+    )
 
     parsed: Namespace = parser.parse_args(argv)
 
@@ -287,14 +294,6 @@ def _run_target() -> int:
         return 1
 
 
-
-        if args.fail_on_regression and comparison_result.has_regression:
-            print(
-                f"Build failed: performance regression above {args.threshold:.2f}% detected.",
-                file=sys.stderr,
-            )
-            return 2
-
 def _run_pytest(args: Namespace) -> int:
     try:
         import pytest
@@ -317,6 +316,7 @@ def _run_pytest(args: Namespace) -> int:
 
     exit_code = _finish_trace(tracer, args)
     return exit_code if exit_code is not None else pytest_exit_code
+
 
 if __name__ == "__main__":
     sys.exit(main())
