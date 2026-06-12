@@ -235,7 +235,7 @@ def test_main_rejects_zero_top(monkeypatch, tmp_path, capsys):
 
     captured = capsys.readouterr()
     assert exit_code == 1
-    assert "--top must be a positive integer" in captured.err
+    assert "argument --top: invalid int value" in captured.err
 
 
 def test_main_rejects_negative_top(monkeypatch, tmp_path, capsys):
@@ -246,7 +246,7 @@ def test_main_rejects_negative_top(monkeypatch, tmp_path, capsys):
 
     captured = capsys.readouterr()
     assert exit_code == 1
-    assert "--top must be a positive integer" in captured.err
+    assert "argument --top: invalid int value" in captured.err
 
 
 def test_main_rejects_non_integer_top(monkeypatch, tmp_path, capsys):
@@ -256,7 +256,7 @@ def test_main_rejects_non_integer_top(monkeypatch, tmp_path, capsys):
     exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "foo"])
 
     captured = capsys.readouterr()
-    assert exit_code == 2
+    assert exit_code == 1
     assert "invalid int value" in captured.err
 
 
@@ -267,7 +267,7 @@ def test_main_rejects_float_top(monkeypatch, tmp_path, capsys):
     exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", "3.5"])
 
     captured = capsys.readouterr()
-    assert exit_code == 2
+    assert exit_code == 1
     assert "invalid int value" in captured.err
 
 
@@ -278,7 +278,7 @@ def test_main_rejects_empty_top(monkeypatch, tmp_path, capsys):
     exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--top", ""])
 
     captured = capsys.readouterr()
-    assert exit_code == 2
+    assert exit_code == 1
     assert "invalid int value" in captured.err
 
 
@@ -591,3 +591,81 @@ def test_main_repeat_one_behaves_like_default(monkeypatch, tmp_path, trace_data)
 
     fake_tracer = fake_tracer_holder["instance"]
     assert fake_tracer.show_results_calls == [None]    
+
+def test_run_missing_command(monkeypatch, capsys):
+    exit_code = _run_cli(monkeypatch, ["oracletrace", "run"])
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "no command specified" in captured.err
+
+
+def test_run_unsupported_command(monkeypatch, capsys):
+    exit_code = _run_cli(monkeypatch, ["oracletrace", "run", "--", "mycmd"])
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "unsupported command" in captured.err
+
+
+def test_run_pytest_basic(monkeypatch, empty_trace_data):
+    fake_tracer_holder: dict = {}
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, empty_trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+
+    pytest_calls: list = []
+    def fake_pytest_main(args=None):
+        pytest_calls.append(args)
+        return 0
+    monkeypatch.setattr(pytest, "main", fake_pytest_main)
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", "run", "--", "pytest"])
+
+    fake_tracer = fake_tracer_holder["instance"]
+    assert exit_code == 0
+    assert fake_tracer.started is True
+    assert fake_tracer.stopped is True
+    assert pytest_calls == [[]]
+
+
+def test_run_pytest_passes_args(monkeypatch, empty_trace_data):
+    fake_tracer_holder: dict = {}
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, empty_trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+
+    pytest_calls: list = []
+    def fake_pytest_main(args=None):
+        pytest_calls.append(args)
+        return 0
+    monkeypatch.setattr(pytest, "main", fake_pytest_main)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", "run", "--", "pytest", "-x", "-v", "tests/"],
+    )
+
+    assert exit_code == 0
+    assert pytest_calls == [["-x", "-v", "tests/"]]
+
+
+def test_run_pytest_propagates_pytest_exit_code(monkeypatch, empty_trace_data):
+    fake_tracer_holder: dict = {}
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, empty_trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+
+    def fake_pytest_main(args=None):
+        return 1
+    monkeypatch.setattr(pytest, "main", fake_pytest_main)
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", "run", "--", "pytest"])
+
+    assert exit_code == 1
+
+

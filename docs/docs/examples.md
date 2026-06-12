@@ -109,6 +109,23 @@ oracletrace my_script.py --json current.json --compare baseline.json --fail-on-r
 
 Use this when you want a simple, scriptable guardrail before merging changes.
 
+## Trace pytest test suites
+
+```bash
+oracletrace run -- pytest tests/ -q
+```
+
+All standard options work with `run`:
+
+```bash
+oracletrace run --json baseline.json -- pytest tests/ -q
+```
+
+Best for:
+
+- Performance regression detection in CI without test-level instrumentation
+- Tracing across multiple test files with a single command
+
 ## Read the logic flow tree
 
 Typical output shape:

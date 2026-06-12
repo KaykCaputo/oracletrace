@@ -17,11 +17,14 @@ oracletrace <target> [--top NUMBER]
 oracletrace <target> [--repeat NUMBER]
 oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
 oracletrace --version
+oracletrace run [options] -- pytest [pytest-args...]
 ```
 
-## Required argument
+## Tracing a Python script
 
-### `target`
+### Required argument
+
+#### `target`
 
 Path to the Python script you want to trace.
 
@@ -30,6 +33,29 @@ Example:
 ```bash
 oracletrace my_app.py
 ```
+
+## Running a command with `oracletrace run`
+
+The `run` subcommand lets you trace commands like `pytest` instead of a single script.
+
+```bash
+oracletrace run [options] -- pytest [pytest-args...]
+```
+
+All standard OracleTrace options (`--json`, `--csv`, `--html`, `--compare`, `--fail-on-regression`, `--threshold`, `--ignore`, `--top`) work with `run`. Use `--` to separate OracleTrace options from the command and its arguments.
+
+Example:
+
+```bash
+oracletrace run --json trace.json -- pytest tests/ -x -v
+```
+
+### Behaviour
+
+- OracleTrace starts tracing, then calls `pytest.main()` in-process with the provided arguments
+- Trace data is captured across all user code exercised by the test suite
+- If `--fail-on-regression` is set and a regression is detected, the exit code is `2` regardless of the pytest exit code
+- If no regression is detected, the pytest exit code is propagated
 
 ## Optional arguments
 
@@ -147,13 +173,13 @@ oracletrace --version
 
 ## Exit behavior
 
-OracleTrace returns a non-zero exit code when:
+| Exit code | Meaning |
+|-----------|---------|
+| `0` | Success |
+| `1` | OracleTrace error (invalid arguments, missing files, etc.) **or** traced command error (e.g. pytest failures) when no regression is detected |
+| `2` | Performance regression detected (`--fail-on-regression`) |
 
-- The target script does not exist
-- The compare JSON file does not exist
-- `--fail-on-regression` is enabled and at least one function regresses above the threshold
-
-Non-zero exit codes can also happen when the target script fails at runtime or when the compare JSON file cannot be parsed.
+When `--fail-on-regression` finds a regression, exit code `2` takes priority over the traced command's exit code. Otherwise the traced command's exit code is propagated.
 
 ## Typical workflows
 
@@ -172,6 +198,18 @@ oracletrace app.py --json current.json --compare baseline.json --fail-on-regress
 ```
 
 Store `baseline.json` as a known-good artifact.
+
+### CI regression workflow with pytest
+
+```bash
+# Generate baseline from a stable branch
+oracletrace run --json baseline.json -- pytest tests/ -q
+
+# Compare in a PR pipeline
+oracletrace run --json current.json --compare baseline.json --fail-on-regression --threshold 25 -- pytest tests/ -q
+```
+
+This enables OracleTrace to act as a performance guardrail in test pipelines without modifying test code.
 
 ## Tips
 
