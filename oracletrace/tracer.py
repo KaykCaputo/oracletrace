@@ -1,17 +1,19 @@
-import sys
-import sysconfig
-import site
 import os
+import sys
+import site
 import time
-from collections import defaultdict
-from rich.tree import Tree
-from rich.table import Table
-from rich import print
-from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict
+import sysconfig
 from re import Pattern
 from pathlib import Path
 from types import FrameType
-from dataclasses import dataclass
+from statistics import median
+from collections import defaultdict
+from dataclasses import dataclass, field
+from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
+
+from rich import print
+from rich.tree import Tree
+from rich.table import Table
 
 @dataclass
 class TracerMetadata:
@@ -25,7 +27,18 @@ class FunctionData:
     total_time: float
     call_count: int
     avg_time: float
-    callees: List[str]
+    callees: set[str] = field(default_factory=set)
+
+    def add(self, trace: Self) -> None:
+        if trace.name != self.name:
+            return
+
+        self.callees.update(trace.callees)
+        self.total_time += trace.total_time
+        self.call_count += trace.call_count
+
+        if self.call_count:
+            self.avg_time = self.total_time / self.call_count
 
 @dataclass
 class TracerData:
@@ -36,7 +49,39 @@ class TracerData:
     def from_dict(cls, data: Dict[str, Any]) -> "TracerData":
         return cls(
             metadata=TracerMetadata(**data["metadata"]),
-            functions=[FunctionData(**f) for f in data["functions"]],
+            functions=[
+                FunctionData(
+                    **{
+                        **f,
+                        "callees": set(f.get("callees", [])),
+                    }
+                )
+                for f in data["functions"]
+            ],
+        )
+
+@dataclass
+class FunctionAggregate:
+    name: str
+    total_times: List[float] = field(default_factory=list)
+    call_counts: List[int] = field(default_factory=list)
+    callees: set[str] = field(default_factory=set)
+
+    def add(self, data: FunctionData) -> None:
+        self.total_times.append(data.total_time)
+        self.call_counts.append(data.call_count)
+        self.callees.update(data.callees)
+
+    def to_function_data(self) -> FunctionData:
+        total_time = median(self.total_times)
+        call_count = int(median(self.call_counts))
+
+        return FunctionData(
+            name=self.name,
+            total_time=total_time,
+            call_count=call_count,
+            avg_time=total_time / call_count if call_count else 0,
+            callees=self.callees,
         )
 
 class Tracer:
@@ -210,13 +255,13 @@ class Tracer:
             )
 
             for child_key, count in sorted_children:
-                total_time = self._func_time[child_key]
+                _total_time = self._func_time[child_key]
                 # Detect recursion to prevent infinite loops in the tree
                 if child_key in current_path:
                     parent_node.add(f"[red]↻ {child_key}[/] ({count}x)")
                     continue
 
-                node_text = f"{child_key} [dim]({count}x, {total_time:.4f}s)[/]"
+                node_text = f"{child_key} [dim]({count}x, {_total_time:.4f}s)[/]"
                 child_node = parent_node.add(node_text)
                 add_nodes(child_node, child_key, current_path | {child_key})
 
@@ -229,14 +274,13 @@ class Tracer:
         for key, total_time in self._func_time.items():
             calls = self._func_calls[key]
             avg_time = total_time / calls if calls else 0
-
             functions.append(
                 FunctionData(
                     name = key,
                     total_time = total_time,
                     call_count = calls,
                     avg_time = avg_time,
-                    callees = list(self._call_map.get(key, {}).keys()),
+                    callees = {k for k in self._call_map.get(key, {}).keys()},
                 )
             )
 

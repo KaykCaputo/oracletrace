@@ -14,6 +14,7 @@ Complete command reference for OracleTrace.
 oracletrace <target> [--json OUTPUT.json] [--csv OUTPUT.csv] [--html OUTPUT.html] [--compare BASELINE.json]
 oracletrace <target> [--ignore REGEX [REGEX ...]]
 oracletrace <target> [--top NUMBER]
+oracletrace <target> [--repeat NUMBER]
 oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
 oracletrace --version
 oracletrace run [options] -- pytest [pytest-args...]
@@ -70,7 +71,7 @@ Use this when you want to keep historical traces or compare later.
 
 ### `--csv`
 
-Exports the trace results to a csv file.
+Exports the trace results to a CSV file.
 
 ```bash
 oracletrace my_app.py --csv run.csv
@@ -154,9 +155,17 @@ Limit the summary table output to a maximum number of results.
 oracletrace my_app.py --top 10
 ```
 
+### `--repeat`
+
+Repeat the trace N times to reduce noise and improve comparison accuracy.
+
+```bash
+oracletrace my_app.py --repeat 5
+```
+
 ### `--version`
 
-Prints version information and exit with a zero code.
+Prints version information and exits with code 0.
 
 ```bash
 oracletrace --version

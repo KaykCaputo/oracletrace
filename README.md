@@ -143,6 +143,7 @@ Add it to your CI to automatically fail on performance regressions.
 | `--threshold`          | Regression percentage threshold        |
 | `--ignore`             | Ignore functions/files via regex       |
 | `--top`                | Show top N functions                   |
+| `--repeat`             | Repeat the tracing N times             |
 
 ---
 
@@ -172,7 +173,7 @@ Filtering removes external/internal calls to focus on application code.
 
 ## Requirements
 
-* Python >= 3.10
+* Python >= 3.11
 * rich
 
 ---
