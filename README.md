@@ -173,7 +173,7 @@ Filtering removes external/internal calls to focus on application code.
 
 ## Requirements
 
-* Python >= 3.10
+* Python >= 3.11
 * rich
 
 ---
