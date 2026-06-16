@@ -671,6 +671,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#trace-pytest-test-suites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace pytest test suites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#read-the-logic-flow-tree" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -769,6 +780,34 @@
     
   
     Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelogs/v3-0-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v3.0.0
   
 
     
@@ -982,6 +1021,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#trace-pytest-test-suites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace pytest test suites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#read-the-logic-flow-tree" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1095,12 +1145,23 @@
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>oracletrace<span class="w"> </span>my_script.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <p>Use this when you want a simple, scriptable guardrail before merging changes.</p>
+<h2 id="trace-pytest-test-suites">Trace pytest test suites<a class="headerlink" href="#trace-pytest-test-suites" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>oracletrace<span class="w"> </span>run<span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-q
+</code></pre></div>
+<p>All standard options work with <code>run</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>oracletrace<span class="w"> </span>run<span class="w"> </span>--json<span class="w"> </span>baseline.json<span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-q
+</code></pre></div>
+<p>Best for:</p>
+<ul>
+<li>Performance regression detection in CI without test-level instrumentation</li>
+<li>Tracing across multiple test files with a single command</li>
+</ul>
 <h2 id="read-the-logic-flow-tree">Read the logic flow tree<a class="headerlink" href="#read-the-logic-flow-tree" title="Permanent link">&para;</a></h2>
 <p>Typical output shape:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>&lt;module&gt;
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>└── app.py:main
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    ├── app.py:load_data
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    └── app.py:process_data
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>&lt;module&gt;
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>└── app.py:main
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    ├── app.py:load_data
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    └── app.py:process_data
 </code></pre></div>
 <p>This is useful for spotting unexpected call paths after feature updates.</p>
 <h2 id="tips-for-accurate-comparisons">Tips for accurate comparisons<a class="headerlink" href="#tips-for-accurate-comparisons" title="Permanent link">&para;</a></h2>

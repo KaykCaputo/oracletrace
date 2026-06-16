@@ -545,6 +545,18 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tracing-a-python-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracing a Python script
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tracing a Python script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#required-argument" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -561,6 +573,39 @@
     <span class="md-ellipsis">
       
         target
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-a-command-with-oracletrace-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running a command with oracletrace run
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running a command with oracletrace run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behaviour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Behaviour
       
     </span>
   </a>
@@ -684,6 +729,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#-repeat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        --repeat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#-version" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -738,6 +794,17 @@
     <span class="md-ellipsis">
       
         CI regression workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ci-regression-workflow-with-pytest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI regression workflow with pytest
       
     </span>
   </a>
@@ -884,6 +951,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../changelogs/v3-0-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v3.0.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../changelogs/v2-0-1/" class="md-nav__link">
         
   
@@ -978,6 +1073,18 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tracing-a-python-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracing a Python script
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tracing a Python script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#required-argument" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -994,6 +1101,39 @@
     <span class="md-ellipsis">
       
         target
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-a-command-with-oracletrace-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running a command with oracletrace run
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running a command with oracletrace run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behaviour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Behaviour
       
     </span>
   </a>
@@ -1117,6 +1257,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#-repeat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        --repeat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#-version" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1177,6 +1328,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ci-regression-workflow-with-pytest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI regression workflow with pytest
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1224,33 +1386,51 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--json<span class="w"> </span>OUTPUT.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--csv<span class="w"> </span>OUTPUT.csv<span class="o">]</span><span class="w"> </span><span class="o">[</span>--html<span class="w"> </span>OUTPUT.html<span class="o">]</span><span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--ignore<span class="w"> </span>REGEX<span class="w"> </span><span class="o">[</span>REGEX<span class="w"> </span>...<span class="o">]]</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--top<span class="w"> </span>NUMBER<span class="o">]</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--fail-on-regression<span class="o">]</span><span class="w"> </span><span class="o">[</span>--threshold<span class="w"> </span>PERCENT<span class="o">]</span><span class="w"> </span><span class="o">[</span>--only-regressions<span class="o">]</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>oracletrace<span class="w"> </span>--version
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--repeat<span class="w"> </span>NUMBER<span class="o">]</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>oracletrace<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>--compare<span class="w"> </span>BASELINE.json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--fail-on-regression<span class="o">]</span><span class="w"> </span><span class="o">[</span>--threshold<span class="w"> </span>PERCENT<span class="o">]</span><span class="w"> </span><span class="o">[</span>--only-regressions<span class="o">]</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>oracletrace<span class="w"> </span>--version
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>oracletrace<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span><span class="o">[</span>pytest-args...<span class="o">]</span>
 </code></pre></div>
-<h2 id="required-argument">Required argument<a class="headerlink" href="#required-argument" title="Permanent link">&para;</a></h2>
-<h3 id="target"><code>target</code><a class="headerlink" href="#target" title="Permanent link">&para;</a></h3>
+<h2 id="tracing-a-python-script">Tracing a Python script<a class="headerlink" href="#tracing-a-python-script" title="Permanent link">&para;</a></h2>
+<h3 id="required-argument">Required argument<a class="headerlink" href="#required-argument" title="Permanent link">&para;</a></h3>
+<h4 id="target"><code>target</code><a class="headerlink" href="#target" title="Permanent link">&para;</a></h4>
 <p>Path to the Python script you want to trace.</p>
 <p>Example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>oracletrace<span class="w"> </span>my_app.py
 </code></pre></div>
+<h2 id="running-a-command-with-oracletrace-run">Running a command with <code>oracletrace run</code><a class="headerlink" href="#running-a-command-with-oracletrace-run" title="Permanent link">&para;</a></h2>
+<p>The <code>run</code> subcommand lets you trace commands like <code>pytest</code> instead of a single script.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>oracletrace<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span><span class="o">[</span>pytest-args...<span class="o">]</span>
+</code></pre></div>
+<p>All standard OracleTrace options (<code>--json</code>, <code>--csv</code>, <code>--html</code>, <code>--compare</code>, <code>--fail-on-regression</code>, <code>--threshold</code>, <code>--ignore</code>, <code>--top</code>) work with <code>run</code>. Use <code>--</code> to separate OracleTrace options from the command and its arguments.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>oracletrace<span class="w"> </span>run<span class="w"> </span>--json<span class="w"> </span>trace.json<span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-x<span class="w"> </span>-v
+</code></pre></div>
+<h3 id="behaviour">Behaviour<a class="headerlink" href="#behaviour" title="Permanent link">&para;</a></h3>
+<ul>
+<li>OracleTrace starts tracing, then calls <code>pytest.main()</code> in-process with the provided arguments</li>
+<li>Trace data is captured across all user code exercised by the test suite</li>
+<li>If <code>--fail-on-regression</code> is set and a regression is detected, the exit code is <code>2</code> regardless of the pytest exit code</li>
+<li>If no regression is detected, the pytest exit code is propagated</li>
+</ul>
 <h2 id="optional-arguments">Optional arguments<a class="headerlink" href="#optional-arguments" title="Permanent link">&para;</a></h2>
 <h3 id="-json"><code>--json</code><a class="headerlink" href="#-json" title="Permanent link">&para;</a></h3>
 <p>Exports trace results to a JSON file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>run.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>run.json
 </code></pre></div>
 <p>Use this when you want to keep historical traces or compare later.</p>
 <h3 id="-csv"><code>--csv</code><a class="headerlink" href="#-csv" title="Permanent link">&para;</a></h3>
-<p>Exports the trace results to a csv file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--csv<span class="w"> </span>run.csv
+<p>Exports the trace results to a CSV file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--csv<span class="w"> </span>run.csv
 </code></pre></div>
 <h3 id="-html"><code>--html</code><a class="headerlink" href="#-html" title="Permanent link">&para;</a></h3>
 <p>Exports the trace results to an interactive HTML file.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--html<span class="w"> </span>report.html
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--html<span class="w"> </span>report.html
 </code></pre></div>
 <p>The generated report includes a sortable table with function timing data and a call graph visualization.</p>
 <h3 id="-compare"><code>--compare</code><a class="headerlink" href="#-compare" title="Permanent link">&para;</a></h3>
 <p>Compares the current run against a previous JSON trace.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
 </code></pre></div>
 <p>Comparison output includes:</p>
 <ul>
@@ -1262,51 +1442,79 @@
 <p>Makes OracleTrace return a non-zero exit code when a regression exceeds the configured threshold.</p>
 <p>Use this together with <code>--compare</code>.</p>
 <p>Example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
 </code></pre></div>
 <h3 id="-threshold"><code>--threshold</code><a class="headerlink" href="#-threshold" title="Permanent link">&para;</a></h3>
 <p>Sets the percentage threshold used with <code>--fail-on-regression</code>.</p>
 <p>Default value: <code>5.0</code></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span>
 </code></pre></div>
 <h3 id="-only-regressions"><code>---only-regressions</code><a class="headerlink" href="#-only-regressions" title="Permanent link">&para;</a></h3>
 <p>Shows only the regressions in the diff output when comparing traces.</p>
 <p>Use with <code>--compare</code>.</p>
 <p>Default value: False</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--only-regressions
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--only-regressions
 </code></pre></div>
 <h3 id="-ignore"><code>--ignore</code><a class="headerlink" href="#-ignore" title="Permanent link">&para;</a></h3>
 <p>Specify file paths and function names to ignore using regular expression syntax.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--ignore<span class="w"> </span><span class="s2">&quot;.*test.*&quot;</span><span class="w"> </span><span class="s2">&quot;.*helpers.py:debug_.*&quot;</span>
 </code></pre></div>
 <p>The ignored files and functions will not appear in the summary table neither the logic flow output.</p>
 <p>Ignore matching is applied on function keys in the form <code>relative_path.py:qualified_function_name</code>.</p>
 <h3 id="-top"><code>--top</code><a class="headerlink" href="#-top" title="Permanent link">&para;</a></h3>
 <p>Limit the summary table output to a maximum number of results.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+<h3 id="-repeat"><code>--repeat</code><a class="headerlink" href="#-repeat" title="Permanent link">&para;</a></h3>
+<p>Repeat the trace N times to reduce noise and improve comparison accuracy.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--repeat<span class="w"> </span><span class="m">5</span>
 </code></pre></div>
 <h3 id="-version"><code>--version</code><a class="headerlink" href="#-version" title="Permanent link">&para;</a></h3>
-<p>Prints version information and exit with a zero code.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>oracletrace<span class="w"> </span>--version
+<p>Prints version information and exits with code 0.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>oracletrace<span class="w"> </span>--version
 </code></pre></div>
 <h2 id="exit-behavior">Exit behavior<a class="headerlink" href="#exit-behavior" title="Permanent link">&para;</a></h2>
-<p>OracleTrace returns a non-zero exit code when:</p>
-<ul>
-<li>The target script does not exist</li>
-<li>The compare JSON file does not exist</li>
-<li><code>--fail-on-regression</code> is enabled and at least one function regresses above the threshold</li>
-</ul>
-<p>Non-zero exit codes can also happen when the target script fails at runtime or when the compare JSON file cannot be parsed.</p>
+<table>
+<thead>
+<tr>
+<th>Exit code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>OracleTrace error (invalid arguments, missing files, etc.) <strong>or</strong> traced command error (e.g. pytest failures) when no regression is detected</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Performance regression detected (<code>--fail-on-regression</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>When <code>--fail-on-regression</code> finds a regression, exit code <code>2</code> takes priority over the traced command's exit code. Otherwise the traced command's exit code is propagated.</p>
 <h2 id="typical-workflows">Typical workflows<a class="headerlink" href="#typical-workflows" title="Permanent link">&para;</a></h2>
 <h3 id="local-development-workflow">Local development workflow<a class="headerlink" href="#local-development-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># change code</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="c1"># change code</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
 </code></pre></div>
 <h3 id="ci-regression-workflow">CI regression workflow<a class="headerlink" href="#ci-regression-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>oracletrace<span class="w"> </span>app.py<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <p>Store <code>baseline.json</code> as a known-good artifact.</p>
+<h3 id="ci-regression-workflow-with-pytest">CI regression workflow with pytest<a class="headerlink" href="#ci-regression-workflow-with-pytest" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Generate baseline from a stable branch</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>oracletrace<span class="w"> </span>run<span class="w"> </span>--json<span class="w"> </span>baseline.json<span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-q
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Compare in a PR pipeline</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>oracletrace<span class="w"> </span>run<span class="w"> </span>--json<span class="w"> </span>current.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">25</span><span class="w"> </span>--<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-q
+</code></pre></div>
+<p>This enables OracleTrace to act as a performance guardrail in test pipelines without modifying test code.</p>
 <h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Run from your project root so filtering focuses on your app code</li>
