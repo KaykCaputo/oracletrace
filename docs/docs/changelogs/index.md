@@ -12,3 +12,4 @@ This section tracks OracleTrace releases and notable changes.
 
 - [v2.0.1](v2-0-1.md)
 - [v2.0.0](v2-0-0.md)
+- [v3.0.0](v3-0-0.md)
