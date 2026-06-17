@@ -112,7 +112,13 @@ OracleTrace compares execution traces and highlights what got slower.
 Fail your pipeline when performance degrades:
 
 ```bash
-oracletrace app.py --json current.json --compare baseline.json --fail-on-regression --threshold 25
+oracletrace run \
+  --repeat 5 \
+  --json current.json \
+  --compare baseline.json \
+  --fail-on-regression \
+  --threshold 10 \
+  -- pytest tests/
 ```
 Add it to your CI to automatically fail on performance regressions.
 
