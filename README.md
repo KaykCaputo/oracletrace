@@ -46,6 +46,26 @@ oracletrace app.py --json new.json --compare baseline.json
 
 ---
 
+## Examples
+
+Try these ready-to-run scripts to explore OracleTrace features:
+
+```bash
+# CPU hotspot — highlights the heaviest function
+oracletrace examples/cpu_hotspot.py
+
+# Nested call graph — see the tree visualization
+oracletrace examples/nested_calls.py
+
+# Regression demo — baseline vs slower path
+oracletrace examples/regression_demo.py --json baseline.json
+SLOW=1 oracletrace examples/regression_demo.py --json current.json --compare baseline.json
+```
+
+All examples are deterministic, finish in under a second, and live in `examples/`. They can also be reused in test suites as smoke tests.
+
+---
+
 ## See it in action
 
 See exactly which functions got slower between runs:
