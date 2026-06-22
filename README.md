@@ -133,11 +133,11 @@ Fail your pipeline when performance degrades:
 
 ```bash
 oracletrace run \
-  --repeat 5 \
+  --repeat 25 \
   --json current.json \
   --compare baseline.json \
   --fail-on-regression \
-  --threshold 10 \
+  --threshold 35 \
   -- pytest tests/
 ```
 Add it to your CI to automatically fail on performance regressions.
