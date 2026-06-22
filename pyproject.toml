@@ -1,6 +1,6 @@
 [project]
 name = "oracletrace"
-version = "3.0.0"
+version = "3.0.1"
 description = "Detect Python performance regressions and compare execution traces with lightweight call graph visualization"
 authors = [
     { name = "Kayk Caputo" },
