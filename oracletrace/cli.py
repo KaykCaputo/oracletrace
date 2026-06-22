@@ -39,6 +39,17 @@ def _validate_top(top_str: Optional[str]) -> Tuple[Optional[int], Optional[int]]
     return top, None
 
 
+def _validate_repeat(repeat_str: Any) -> Tuple[int, Optional[int]]:
+    try:
+        repeat = int(repeat_str)
+        if repeat < 1:
+            raise ValueError
+    except ValueError:
+        print(f"argument --repeat: invalid int value: '{repeat_str}'", file=sys.stderr)
+        return 0, 1
+    return repeat, None
+
+
 def _compile_ignore_patterns(
     patterns: Optional[List[str]],
 ) -> Tuple[Optional[List[Pattern]], Optional[int]]:
@@ -200,6 +211,11 @@ def _run_target() -> int:
         return err
     args.top = top
 
+    repeat, err = _validate_repeat(args.repeat)
+    if err is not None:
+        return err
+    args.repeat = repeat
+
     ignore_patterns, err = _compile_ignore_patterns(args.ignore)
     if err is not None:
         return err
@@ -224,7 +240,7 @@ def _run_target() -> int:
             _tracer.stop()
         return _tracer, _tracer.get_trace_data()
 
-    runs: int = int(args.repeat)
+    runs: int = args.repeat
 
     if runs > 1:
         aggs: Dict[str, FunctionAggregate] = {}

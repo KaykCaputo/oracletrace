@@ -324,6 +324,39 @@ def test_main_accepts_large_top_value(monkeypatch, tmp_path, trace_data):
     assert fake_tracer.show_results_calls == [99999]
 
 
+def test_main_rejects_zero_repeat(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--repeat", "0"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "argument --repeat: invalid int value" in captured.err
+
+
+def test_main_rejects_negative_repeat(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--repeat", "-1"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "argument --repeat: invalid int value" in captured.err
+
+
+def test_main_rejects_non_integer_repeat(monkeypatch, tmp_path, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+
+    exit_code = _run_cli(monkeypatch, ["oracletrace", str(target), "--repeat", "abc"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "argument --repeat: invalid int value" in captured.err
+
+
 def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace_data, capsys):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
