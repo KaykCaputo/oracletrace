@@ -51,7 +51,7 @@ oracletrace your_script.py --json current.json --compare baseline.json
 
 ```bash
 oracletrace your_script.py --csv trace.csv
-oracletrace your_script.py --ignore "helper_function,debug_*"
+oracletrace your_script.py --ignore ".*helper_function.*" "debug_.*"
 oracletrace your_script.py --top 10
 ```
 
