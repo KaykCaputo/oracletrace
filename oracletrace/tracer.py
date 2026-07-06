@@ -127,21 +127,31 @@ class Tracer:
         filename = os.path.realpath(filename)
         root_path = os.path.realpath(self._root_path)
 
-        # Check project root
-        if os.path.commonpath([root_path, filename]) != root_path:
+        # Check project root (commonpath raises ValueError on Windows when
+        # the paths sit on different drives — a different drive is outside)
+        try:
+            if os.path.commonpath([root_path, filename]) != root_path:
+                return False
+        except ValueError:
             return False
 
-        # Exclude Python stdlib
+        # Exclude Python stdlib (a different drive cannot be the stdlib)
         stdlib_path = os.path.realpath(sysconfig.get_path("stdlib"))
-        if os.path.commonpath([stdlib_path, filename]) == stdlib_path:
-            return False
+        try:
+            if os.path.commonpath([stdlib_path, filename]) == stdlib_path:
+                return False
+        except ValueError:
+            pass
 
         # Exclude all site-packages
         site_paths = site.getsitepackages() + [site.getusersitepackages()]
         normalized_site_paths = [os.path.realpath(p) for p in site_paths]
         for sp in normalized_site_paths:
-            if os.path.commonpath([sp, filename]) == sp:
-                return False
+            try:
+                if os.path.commonpath([sp, filename]) == sp:
+                    return False
+            except ValueError:
+                continue
 
         # Exclude venv-like directories that may be inside the project root
         venv_markers = {"venv", ".venv", "env", ".env", "virtualenv"}
