@@ -9,11 +9,14 @@ from types import FrameType
 from statistics import median
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self
+from typing import List, Optional, Callable, DefaultDict, Any, Tuple, Dict, Self, Literal, TypeAlias
 
 from rich import print
 from rich.tree import Tree
 from rich.table import Table
+
+ProfileEvent: TypeAlias = Literal["call", "return", "c_call", "c_return", "c_exception"]
+ProfileFunction: TypeAlias = Callable[[FrameType, ProfileEvent, Any], object]
 
 @dataclass
 class TracerMetadata:
@@ -91,7 +94,7 @@ class Tracer:
         self._func_calls: DefaultDict[str, int] = defaultdict(int)
         self._func_time: DefaultDict[str, float] = defaultdict(float)
         self._call_map: DefaultDict[str, DefaultDict[str, int]] = defaultdict(lambda: defaultdict(int))
-        self._original_profile_func: Optional[Callable[[FrameType, str, Any], object]] = None
+        self._original_profile_func: Optional[ProfileFunction] = None
         self._enabled: bool = False
         self._start_time: float = 0.0          
         self._total_time: float = 0.0
