@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Detect Python performance regressions with execution tracing, JSON baseline comparison, and call graph visualization.">
+        <meta name="description" content="Add CI performance regression guardrails to Python projects with execution tracing, JSON baselines, and call graph output.">
       
       
         <meta name="author" content="Kayk Caputo">
@@ -94,7 +94,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#oracletrace-python-performance-regression-detection" class="md-skip">
+        <a href="#oracletrace-ci-performance-regression-guardrails" class="md-skip">
           Skip to content
         </a>
       
@@ -531,6 +531,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#baseline-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#csv-export-for-reporting" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -573,6 +584,17 @@
     <span class="md-ellipsis">
       
         How OracleTrace works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-another-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use another tool
       
     </span>
   </a>
@@ -984,6 +1006,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#baseline-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#csv-export-for-reporting" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1033,6 +1066,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#when-to-use-another-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use another tool
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1068,25 +1112,26 @@
   
 
 
-<h1 id="oracletrace-python-performance-regression-detection">OracleTrace: Python Performance Regression Detection<a class="headerlink" href="#oracletrace-python-performance-regression-detection" title="Permanent link">&para;</a></h1>
+<h1 id="oracletrace-ci-performance-regression-guardrails">OracleTrace: CI Performance Regression Guardrails<a class="headerlink" href="#oracletrace-ci-performance-regression-guardrails" title="Permanent link">&para;</a></h1>
 <div class="hero">
 <p><img src="assets/oracletracecat.png" alt="OracleTrace logo" class="ot-logo" loading="lazy"></p>
-<p><strong>OracleTrace</strong> helps you find Python slowdowns early by tracing function calls, comparing execution runs, and showing a clean call graph.</p>
+<p><strong>OracleTrace</strong> helps Python teams catch slowdowns before merge by tracing function calls, saving baselines, comparing current runs, and failing CI when regressions exceed your threshold.</p>
 <p><a class="md-button md-button--primary" href="quickstart/">Get started in 2 minutes</a>
 <a class="md-button" href="installation/">Install OracleTrace</a></p>
 </div>
 <h2 id="what-is-oracletrace">What is OracleTrace?<a class="headerlink" href="#what-is-oracletrace" title="Permanent link">&para;</a></h2>
-<p>OracleTrace is a lightweight Python execution tracing tool built for practical performance analysis.</p>
+<p>OracleTrace is a lightweight Python execution tracing tool built for practical performance regression checks in local development and CI.</p>
 <p>Use it to:</p>
 <ul>
 <li>Detect performance regressions between script versions</li>
 <li>Compare baseline and new trace runs</li>
+<li>Save and compare named baseline files</li>
 <li>Inspect per-function timing and call counts</li>
 <li>Visualize caller to callee flow with a readable tree</li>
 <li>Automate performance checks in CI pipelines</li>
 </ul>
 <h2 id="why-use-it-instead-of-a-heavy-profiler">Why use it instead of a heavy profiler?<a class="headerlink" href="#why-use-it-instead-of-a-heavy-profiler" title="Permanent link">&para;</a></h2>
-<p>Most profilers are great for deep optimization work. OracleTrace is focused on quick day-to-day regression checks.</p>
+<p>Most profilers are great for deep optimization work. OracleTrace is focused on quick day-to-day regression checks that fit into pull request workflows.</p>
 <p>You get fast answers to questions like:</p>
 <ul>
 <li>What became slower after this change?</li>
@@ -1119,20 +1164,28 @@
 <li>Historical regression tracking</li>
 <li>Custom analysis scripts</li>
 </ul>
+<h3 id="baseline-management">Baseline management<a class="headerlink" href="#baseline-management" title="Permanent link">&para;</a></h3>
+<p>Create stable references and compare saved traces without rerunning the baseline:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>baseline<span class="w"> </span>save<span class="w"> </span>my_app.py<span class="w"> </span>baseline.json
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>baseline<span class="w"> </span>compare<span class="w"> </span>baseline.json<span class="w"> </span>current.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">35</span>
+</code></pre></div>
 <h3 id="csv-export-for-reporting">CSV export for reporting<a class="headerlink" href="#csv-export-for-reporting" title="Permanent link">&para;</a></h3>
 <p>Export flat metrics for spreadsheet workflows and external dashboards.</p>
 <h3 id="regression-gates-for-ci">Regression gates for CI<a class="headerlink" href="#regression-gates-for-ci" title="Permanent link">&para;</a></h3>
 <p>Use <code>--fail-on-regression</code> and <code>--threshold</code> to fail builds only when slowdowns pass your tolerance.</p>
 <h2 id="quick-command-preview">Quick command preview<a class="headerlink" href="#quick-command-preview" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>oracletrace<span class="w"> </span>my_app.py
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>oracletrace<span class="w"> </span>my_app.py
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>baseline.json
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>oracletrace<span class="w"> </span>my_app.py<span class="w"> </span>--json<span class="w"> </span>new.json<span class="w"> </span>--compare<span class="w"> </span>baseline.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">35</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>oracletrace<span class="w"> </span>baseline<span class="w"> </span>compare<span class="w"> </span>baseline.json<span class="w"> </span>new.json<span class="w"> </span>--fail-on-regression<span class="w"> </span>--threshold<span class="w"> </span><span class="m">35</span>
 </code></pre></div>
 <p><img alt="OracleTrace CLI demo" src="assets/oracletrace-cli-demo.gif" /></p>
 <h2 id="how-oracletrace-works">How OracleTrace works<a class="headerlink" href="#how-oracletrace-works" title="Permanent link">&para;</a></h2>
 <p>OracleTrace uses Python's built-in <code>sys.setprofile()</code> hook to capture <code>call</code> and <code>return</code> events, then aggregates function-level timing and call relationships.</p>
 <p>It filters out non-project code so output stays focused on what you actually own.</p>
+<h2 id="when-to-use-another-tool">When to use another tool<a class="headerlink" href="#when-to-use-another-tool" title="Permanent link">&para;</a></h2>
+<p>Use OracleTrace when you need a fast regression signal for scripts, tests, and CI gates. Use <code>cProfile</code>, <code>py-spy</code>, or benchmark frameworks when you need deep profiling statistics, production process sampling, memory analysis, or rigorous microbenchmarking.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="installation/">Installation guide</a></li>
