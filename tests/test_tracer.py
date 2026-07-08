@@ -110,3 +110,42 @@ def test_root_path_with_trailing_slash(tracer):
     user_file = os.path.join(tracer._root_path, "module.py")
     Path(user_file).touch()
     assert tracer._is_user_code(user_file)
+
+
+def test_file_on_another_drive_is_ignored_not_fatal(tracer, monkeypatch):
+    # On Windows, os.path.commonpath raises ValueError when the two paths
+    # sit on different drives; a file on another drive is simply not part
+    # of the project. Simulated so the guard is exercised on every OS.
+    real_commonpath = os.path.commonpath
+
+    def commonpath(paths):
+        if any("OTHER_DRIVE" in str(p) for p in paths):
+            raise ValueError("Paths don't have the same drive")
+        return real_commonpath(paths)
+
+    monkeypatch.setattr(os.path, "commonpath", commonpath)
+    assert not tracer._is_user_code(os.path.join("OTHER_DRIVE", "script.py"))
+
+
+def test_stdlib_and_site_on_another_drive_do_not_crash(tracer, monkeypatch):
+    # Interpreter installed on C:, project on F: — the stdlib/site-packages
+    # comparisons raise ValueError for every project file, which used to
+    # kill tracing entirely. A different drive cannot be the stdlib.
+    import site
+    import sysconfig
+
+    real_commonpath = os.path.commonpath
+
+    def commonpath(paths):
+        if any("OTHER_DRIVE" in str(p) for p in paths):
+            raise ValueError("Paths don't have the same drive")
+        return real_commonpath(paths)
+
+    monkeypatch.setattr(os.path, "commonpath", commonpath)
+    monkeypatch.setattr(sysconfig, "get_path", lambda name: os.path.join("OTHER_DRIVE", "stdlib"))
+    monkeypatch.setattr(site, "getsitepackages", lambda: [os.path.join("OTHER_DRIVE", "site-packages")])
+    monkeypatch.setattr(site, "getusersitepackages", lambda: os.path.join("OTHER_DRIVE", "user-site"))
+
+    user_file = os.path.join(tracer._root_path, "module.py")
+    Path(user_file).touch()
+    assert tracer._is_user_code(user_file)
