@@ -1,6 +1,6 @@
 [project]
 name = "oracletrace"
-version = "3.0.1"
+version = "3.0.2"
 description = "Detect Python performance regressions and compare execution traces with lightweight call graph visualization"
 authors = [
     { name = "Kayk Caputo" },
@@ -10,9 +10,6 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = ["rich"]
-
-[dependency-groups]
-dev = ["mypy", "pytest"]
 
 keywords = [
     "python profiler",
@@ -41,6 +38,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent"
 ]
+
+[dependency-groups]
+dev = ["mypy", "pytest"]
 
 [project.scripts]
 oracletrace = "oracletrace.cli:main"

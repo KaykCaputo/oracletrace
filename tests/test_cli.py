@@ -702,3 +702,139 @@ def test_run_pytest_propagates_pytest_exit_code(monkeypatch, empty_trace_data):
     assert exit_code == 1
 
 
+def test_baseline_save_traces_script_and_writes_json(monkeypatch, tmp_path, trace_data, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    output = tmp_path / "baseline.json"
+
+    fake_tracer_holder = {}
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        fake_tracer_holder["instance"] = fake
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", "baseline", "save", str(target), str(output)],
+    )
+
+    captured = capsys.readouterr()
+    fake_tracer = fake_tracer_holder["instance"]
+
+    assert exit_code == 0
+    assert "Baseline saved:" in captured.out
+    assert fake_tracer.started is True
+    assert fake_tracer.stopped is True
+    assert fake_tracer.show_results_calls == [None]
+    assert TracerData.from_dict(json.loads(output.read_text(encoding="utf-8"))) == trace_data
+
+
+def test_baseline_save_respects_repeat(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    output = tmp_path / "baseline.json"
+    tracer_instances = []
+
+    def tracer_factory(root, ignore_patterns):
+        fake = FakeTracer(root, ignore_patterns, trace_data)
+        tracer_instances.append(fake)
+        return fake
+
+    monkeypatch.setattr(cli, "Tracer", tracer_factory)
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", "baseline", "save", str(target), str(output), "--repeat", "3"],
+    )
+
+    assert exit_code == 0
+    assert len(tracer_instances) == 3
+    assert output.exists()
+
+
+def test_baseline_compare_returns_0_without_regression(monkeypatch, tmp_path, trace_data):
+    baseline = tmp_path / "baseline.json"
+    current = tmp_path / "current.json"
+    baseline.write_text(json.dumps(asdict(trace_data), default=set_default), encoding="utf-8")
+    current.write_text(json.dumps(asdict(trace_data), default=set_default), encoding="utf-8")
+
+    compare_calls = []
+
+    def fake_compare_traces(old_data, new_data, threshold, show_only_regressions):
+        compare_calls.append((old_data, new_data, threshold, show_only_regressions))
+        return ComparisonData(regressions=[], has_regression=False)
+
+    monkeypatch.setattr(cli, "compare_traces", fake_compare_traces)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            "baseline",
+            "compare",
+            str(baseline),
+            str(current),
+            "--threshold",
+            "12.5",
+            "--only-regressions",
+        ],
+    )
+
+    assert exit_code == 0
+    assert compare_calls[0][2] == 12.5
+    assert compare_calls[0][3] is True
+
+
+def test_baseline_compare_fails_with_exit_2_on_regression(monkeypatch, tmp_path, trace_data, capsys):
+    baseline = tmp_path / "baseline.json"
+    current = tmp_path / "current.json"
+    baseline.write_text(json.dumps(asdict(trace_data), default=set_default), encoding="utf-8")
+    current.write_text(json.dumps(asdict(trace_data), default=set_default), encoding="utf-8")
+
+    monkeypatch.setattr(
+        cli,
+        "compare_traces",
+        lambda old_data, new_data, threshold, show_only_regressions: ComparisonData(
+            regressions=[],
+            has_regression=True,
+        ),
+    )
+
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            "baseline",
+            "compare",
+            str(baseline),
+            str(current),
+            "--fail-on-regression",
+        ],
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert "Build failed: performance regression above 5.00% detected." in captured.err
+
+
+def test_baseline_compare_returns_1_when_files_are_missing(monkeypatch, tmp_path, capsys):
+    exit_code = _run_cli(
+        monkeypatch,
+        [
+            "oracletrace",
+            "baseline",
+            "compare",
+            str(tmp_path / "missing-baseline.json"),
+            str(tmp_path / "missing-current.json"),
+        ],
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "Baseline file not found:" in captured.err
+

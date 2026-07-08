@@ -18,6 +18,8 @@ oracletrace <target> [--repeat NUMBER]
 oracletrace <target> [--compare BASELINE.json] [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
 oracletrace --version
 oracletrace run [options] -- pytest [pytest-args...]
+oracletrace baseline save <target> <baseline.json> [options]
+oracletrace baseline compare <baseline.json> <current.json> [--fail-on-regression] [--threshold PERCENT] [--only-regressions]
 ```
 
 ## Tracing a Python script
@@ -57,6 +59,32 @@ oracletrace run --json trace.json -- pytest tests/ -x -v
 - If `--fail-on-regression` is set and a regression is detected, the exit code is `2` regardless of the pytest exit code
 - If no regression is detected, the pytest exit code is propagated
 
+## Managing baselines
+
+Use baseline commands when CI should compare against a saved known-good trace without rerunning the baseline during every job.
+
+### Save a baseline
+
+```bash
+oracletrace baseline save my_app.py baseline.json
+```
+
+`baseline save` traces the target script and writes a JSON baseline. Standard tracing options such as `--repeat`, `--ignore`, `--top`, `--csv`, and `--html` can be used.
+
+Example:
+
+```bash
+oracletrace baseline save my_app.py baseline.json --repeat 50 --ignore ".*debug.*"
+```
+
+### Compare saved traces
+
+```bash
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 35
+```
+
+`baseline compare` compares two existing OracleTrace JSON files. This is useful when a stable baseline is stored as a release asset, repository fixture, or CI artifact.
+
 ## Optional arguments
 
 ### `--json`
@@ -85,7 +113,7 @@ Exports the trace results to an interactive HTML file.
 oracletrace my_app.py --html report.html
 ```
 
-The generated report includes a sortable table with function timing data and a call graph visualization.
+The generated report includes a standalone sortable table with function timing data and callees.
 
 ### `--compare`
 
@@ -123,7 +151,7 @@ Default value: `5.0`
 oracletrace my_app.py --compare baseline.json --fail-on-regression --threshold 25
 ```
 
-### `---only-regressions`
+### `--only-regressions`
 
 Shows only the regressions in the diff output when comparing traces.
 
@@ -198,6 +226,19 @@ oracletrace app.py --json current.json --compare baseline.json --fail-on-regress
 ```
 
 Store `baseline.json` as a known-good artifact.
+
+### CI regression workflow with baseline commands
+
+```bash
+# stable branch or release job
+oracletrace baseline save app.py baseline.json --repeat 50
+
+# pull request job
+oracletrace app.py --json current.json --repeat 50
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 35
+```
+
+This separates baseline creation from pull request validation and makes the comparison step independent of target execution.
 
 ### CI regression workflow with pytest
 

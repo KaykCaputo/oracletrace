@@ -6,7 +6,7 @@ og_description: Practical local and CI usage patterns to detect Python performan
 
 # Examples
 
-Practical OracleTrace usage patterns for local development and CI.
+Practical OracleTrace usage patterns for local development and CI performance gates.
 
 ## Basic trace run
 
@@ -30,6 +30,17 @@ Best for:
 - Keeping historical performance snapshots
 - Sharing results between local and CI environments
 
+## Save a named baseline
+
+```bash
+oracletrace baseline save my_script.py baseline.json
+```
+
+Best for:
+
+- Creating a known-good reference from a stable branch
+- Separating baseline generation from pull request validation
+
 ## Save trace data to CSV
 
 ```bash
@@ -48,6 +59,15 @@ oracletrace my_script.py --json new.json --compare baseline.json
 ```
 
 This highlights function-level deltas so you can catch regressions right after a change.
+
+## Compare saved baseline files
+
+```bash
+oracletrace my_script.py --json current.json
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 35
+```
+
+This is the recommended pattern when CI downloads or checks out a prebuilt baseline file.
 
 ## Compare two code versions
 
@@ -100,11 +120,12 @@ Useful when you want a concise summary of the heaviest functions.
 ## Lightweight CI check pattern
 
 ```bash
-# one-time baseline (store artifact)
-oracletrace my_script.py --json baseline.json
+# stable branch or release job
+oracletrace baseline save my_script.py baseline.json --repeat 50
 
-# in CI pipeline
-oracletrace my_script.py --json current.json --compare baseline.json --fail-on-regression --threshold 10
+# pull request job
+oracletrace my_script.py --json current.json --repeat 50
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 50
 ```
 
 Use this when you want a simple, scriptable guardrail before merging changes.
@@ -145,3 +166,7 @@ This is useful for spotting unexpected call paths after feature updates.
 - Capture a stable baseline from a clean environment
 - Compare after focused changes (small PRs are easier to diagnose)
 - Combine with unit tests for correctness plus performance confidence
+
+## When OracleTrace is not the right tool
+
+Use a profiler such as `cProfile` or `py-spy` for deep optimization sessions, production process sampling, memory analysis, or detailed call statistics. Use benchmark frameworks when you need statistically rigorous microbenchmarks. OracleTrace is optimized for fast regression signals in scripts, tests, and CI.

@@ -56,6 +56,12 @@ oracletrace my_app.py --json baseline.json
 
 Keep this file as your reference run.
 
+You can also use the explicit baseline command:
+
+```bash
+oracletrace baseline save my_app.py baseline.json
+```
+
 Optional: also export to CSV for spreadsheet-style analysis.
 
 ```bash
@@ -68,6 +74,13 @@ Increase one of the `sleep` values in your script, then run:
 
 ```bash
 oracletrace my_app.py --json new.json --compare baseline.json
+```
+
+Or compare saved trace files directly:
+
+```bash
+oracletrace my_app.py --json new.json
+oracletrace baseline compare baseline.json new.json
 ```
 
 Comparison output highlights:
@@ -94,7 +107,8 @@ OracleTrace is optimized for relative change detection between runs, which makes
 Use the comparison step as a build guard:
 
 ```bash
-oracletrace my_app.py --json current.json --compare baseline.json --fail-on-regression --threshold 10
+oracletrace my_app.py --json current.json
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 10
 ```
 
 When a function regresses above the configured threshold, OracleTrace returns exit code `2`.

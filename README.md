@@ -1,6 +1,6 @@
 # OracleTrace — Detect Python Performance Regressions with Execution Diff
 
-> Detect performance regressions between runs of your Python script in seconds.
+> Detect Python performance regressions before they merge.
 
 <table><tr>
 <td><img src="https://raw.githubusercontent.com/KaykCaputo/oracletrace/master/oracletracecat.png" alt="OracleTrace Logo" width="185"/></td>
@@ -10,7 +10,7 @@
 
 OracleTrace is a **git diff for performance.**
 
-**Run your script twice and instantly see what got slower — with function-level precision.**
+**Create a known-good baseline, trace the current run, and see exactly which functions got slower.**
 
 </td>
 </tr></table>
@@ -42,6 +42,13 @@ oracletrace app.py
 ```bash
 oracletrace app.py --json baseline.json
 oracletrace app.py --json new.json --compare baseline.json
+```
+
+### 3. Manage baselines explicitly:
+```bash
+oracletrace baseline save app.py baseline.json
+oracletrace app.py --json current.json
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 10
 ```
 
 ---
@@ -112,11 +119,11 @@ Logic Flow:
 
 ### Problem
 
-Performance regressions are hard to detect early.
+Performance regressions often reach production because correctness tests still pass.
 
 ### Solution
 
-OracleTrace compares execution traces and highlights what got slower.
+OracleTrace gives CI a small, scriptable performance gate based on saved execution traces.
 
 ### How it works
 
@@ -133,7 +140,7 @@ Fail your pipeline when performance degrades:
 
 ```bash
 oracletrace run \
-  --repeat 25 \
+  --repeat 50 \
   --json current.json \
   --compare baseline.json \
   --fail-on-regression \
@@ -141,6 +148,17 @@ oracletrace run \
   -- pytest tests/
 ```
 Add it to your CI to automatically fail on performance regressions.
+
+Baseline-file workflow:
+
+```bash
+# on a stable branch or release job
+oracletrace baseline save app.py baseline.json --repeat 50
+
+# in a pull request job
+oracletrace app.py --json current.json --repeat 50
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 35
+```
 
 ---
 
@@ -154,6 +172,7 @@ Add it to your CI to automatically fail on performance regressions.
 * Regex-based filtering (`--ignore`)
 * Top-N function focus (`--top`)
 * CI regression gates
+* Baseline save and compare commands
 
 ---
 
@@ -171,19 +190,27 @@ Add it to your CI to automatically fail on performance regressions.
 | `--top`                | Show top N functions                   |
 | `--repeat`             | Repeat the tracing N times             |
 
+Baseline commands:
+
+```bash
+oracletrace baseline save app.py baseline.json
+oracletrace baseline compare baseline.json current.json --fail-on-regression --threshold 35
+```
+
 ---
 
 ## Use Cases
 
 ### Primary
 
-* Detect performance regressions between runs
+* Guard pull requests against Python performance regressions
 
 ### Secondary
 
 * CI performance validation
 * Execution trace inspection
 * Call graph visualization
+* Release baseline tracking
 
 ---
 
@@ -201,6 +228,10 @@ Filtering removes external/internal calls to focus on application code.
 
 * Python >= 3.11
 * rich
+
+## When to use another tool
+
+OracleTrace is for lightweight regression checks and function-level change detection. Use `cProfile`, `py-spy`, or a benchmark suite when you need deep profiler statistics, sampling of production processes, memory profiling, or statistically rigorous microbenchmarks.
 
 ---
 

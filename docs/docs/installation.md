@@ -10,7 +10,7 @@ Install OracleTrace in under a minute and get ready to trace Python performance 
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - `pip`
 
 ## Standard install
@@ -83,4 +83,4 @@ Check your Python version:
 python --version
 ```
 
-OracleTrace requires Python 3.10 or newer.
+OracleTrace requires Python 3.11 or newer.
