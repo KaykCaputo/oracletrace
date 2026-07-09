@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from html import escape
 from string import Template
 from typing import List
 from ..tracer import TracerData, FunctionData
@@ -15,7 +16,7 @@ def generate_html_report(data: TracerData, output_path: str) -> None:
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     html = _JSTemplate(_HTML_TEMPLATE).substitute(
-        root_path=metadata.root_path,
+        root_path=escape(metadata.root_path),
         total_time=f"{metadata.total_execution_time:.4f}s",
         total_functions=str(metadata.total_functions),
         timestamp=timestamp,
@@ -36,7 +37,9 @@ def _serialize_functions(functions: List[FunctionData]) -> str:
             "avg_time": fn.avg_time * 1000,
             "callees": fn.callees,
         })
-    return json.dumps(serialized)
+    # < keeps a literal "</script>" in a function name from terminating
+    # the inline <script> block at parse time
+    return json.dumps(serialized).replace("<", "\\u003c")
 
 
 _HTML_TEMPLATE = '''<!DOCTYPE html>
@@ -216,6 +219,11 @@ _HTML_TEMPLATE = '''<!DOCTYPE html>
         let sortDir = "desc";
         let searchTerm = "";
 
+        function esc(s) {
+            return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
         function render() {
             const filtered = functions.filter(f =>
                 f.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -232,11 +240,11 @@ _HTML_TEMPLATE = '''<!DOCTYPE html>
             const tbody = document.getElementById("table-body");
             tbody.innerHTML = filtered.map(f => `
                 <tr>
-                    <td>${f.name}</td>
+                    <td>${esc(f.name)}</td>
                     <td>${f.total_time.toFixed(4)}</td>
                     <td>${f.call_count}</td>
                     <td>${f.avg_time.toFixed(4)}</td>
-                    <td class="callee">${f.callees.join(", ")}</td>
+                    <td class="callee">${f.callees.map(esc).join(", ")}</td>
                 </tr>
             `).join("");
 
