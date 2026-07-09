@@ -18,6 +18,21 @@ from rich.table import Table
 ProfileEvent: TypeAlias = Literal["call", "return", "c_call", "c_return", "c_exception"]
 ProfileFunction: TypeAlias = Callable[[FrameType, ProfileEvent, Any], object]
 
+
+def _safe_char(preferred: str, fallback: str) -> str:
+    # Use the unicode char only when stdout can actually encode it —
+    # piped output on Windows is often cp1252, where rich raises
+    # UnicodeEncodeError and the whole run crashes after tracing finished
+    enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        preferred.encode(enc)
+        return preferred
+    except (UnicodeEncodeError, LookupError):
+        return fallback
+
+
+_CYCLE = _safe_char("↻", "@")
+
 @dataclass
 class TracerMetadata:
     root_path: str
@@ -271,7 +286,7 @@ class Tracer:
                 _total_time = self._func_time[child_key]
                 # Detect recursion to prevent infinite loops in the tree
                 if child_key in current_path:
-                    parent_node.add(f"[red]↻ {child_key}[/] ({count}x)")
+                    parent_node.add(f"[red]{_CYCLE} {child_key}[/] ({count}x)")
                     continue
 
                 node_text = f"{child_key} [dim]({count}x, {_total_time:.4f}s)[/]"
