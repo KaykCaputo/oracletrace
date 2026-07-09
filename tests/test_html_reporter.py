@@ -123,3 +123,45 @@ def test_html_report_empty_functions(sample_trace_data, tmp_path):
 
     assert "[]" in content
     assert "/empty" in content
+
+
+def test_script_breakout_in_function_name_is_neutralized(tmp_path):
+    data = TracerData(
+        metadata=TracerMetadata(
+            root_path="/test/project", total_functions=1, total_execution_time=1.0
+        ),
+        functions=[
+            FunctionData(
+                name='evil.py:</script><script>alert(1)</script>',
+                total_time=1.0,
+                call_count=1,
+                avg_time=1.0,
+                callees=['evil.py:</script><img src=x onerror=alert(2)>'],
+            )
+        ],
+    )
+    output = tmp_path / "report.html"
+    generate_html_report(data, str(output))
+    html = output.read_text(encoding="utf-8")
+
+    # a literal </script> inside the embedded JSON would terminate the
+    # report's own script block at parse time
+    assert "<script>alert(1)</script>" not in html
+    assert "<img src=x onerror" not in html
+    assert "\u003c/script" in html  # payload survives, JSON-escaped
+
+
+def test_root_path_is_html_escaped(tmp_path):
+    data = TracerData(
+        metadata=TracerMetadata(
+            root_path='/proj/<img src=x onerror=alert(3)>',
+            total_functions=0,
+            total_execution_time=0.0,
+        ),
+        functions=[],
+    )
+    output = tmp_path / "report.html"
+    generate_html_report(data, str(output))
+    html = output.read_text(encoding="utf-8")
+    assert "<img src=x onerror=alert(3)>" not in html
+    assert "&lt;img" in html
