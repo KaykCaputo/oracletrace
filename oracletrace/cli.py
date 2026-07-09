@@ -256,24 +256,26 @@ def _finish_trace(tracer: Tracer, args: Namespace) -> Optional[int]:
     return _compare_and_fail(data, args)
 
 
-def _trace_script(target: str, args: Namespace) -> Tuple[Optional[int], Optional[TracerData], Optional[Tracer]]:
+def _trace_script(
+    target: str, args: Namespace
+) -> Tuple[Optional[int], Optional[TracerData], Optional[Tracer], int]:
     top, err = _validate_top(args.top)
     if err is not None:
-        return err, None, None
+        return err, None, None, 0
     args.top = top
 
     repeat, err = _validate_repeat(args.repeat)
     if err is not None:
-        return err, None, None
+        return err, None, None, 0
     args.repeat = repeat
 
     ignore_patterns, err = _compile_ignore_patterns(args.ignore)
     if err is not None:
-        return err, None, None
+        return err, None, None, 0
 
     if not os.path.exists(target):
         print(f"Target not found: {target}", file=sys.stderr)
-        return 1, None, None
+        return 1, None, None, 0
 
     target = os.path.abspath(target)
     target_dir: str = os.path.dirname(target)
@@ -281,14 +283,25 @@ def _trace_script(target: str, args: Namespace) -> Tuple[Optional[int], Optional
 
     root: str = os.getcwd()
 
-    def run_trace() -> Tuple[Tracer, TracerData]:
+    def run_trace() -> Tuple[Tracer, TracerData, int]:
         _tracer: Tracer = Tracer(root, ignore_patterns=ignore_patterns)
         _tracer.start()
+        script_exit: int = 0
         try:
             runpy.run_path(target, run_name="__main__")
+        except SystemExit as exc:
+            # The script called sys.exit(). Reporting and exports must still
+            # run; the script's own exit code is surfaced at the very end.
+            if exc.code is None:
+                script_exit = 0
+            elif isinstance(exc.code, int):
+                script_exit = exc.code
+            else:  # sys.exit("message") prints to stderr and exits 1
+                print(exc.code, file=sys.stderr)
+                script_exit = 1
         finally:
             _tracer.stop()
-        return _tracer, _tracer.get_trace_data()
+        return _tracer, _tracer.get_trace_data(), script_exit
 
     runs: int = args.repeat
 
@@ -296,9 +309,10 @@ def _trace_script(target: str, args: Namespace) -> Tuple[Optional[int], Optional
         aggs: Dict[str, FunctionAggregate] = {}
         wall_times: List[float] = []
         data: TracerData
+        script_exit: int = 0
 
         for _ in range(runs):
-            _, data = run_trace()
+            _, data, script_exit = run_trace()
             wall_times.append(data.metadata.total_execution_time)
             for function_data in data.functions:
                 if function_data.name not in aggs:
@@ -313,10 +327,10 @@ def _trace_script(target: str, args: Namespace) -> Tuple[Optional[int], Optional
             ),
             functions=[agg.to_function_data() for agg in aggs.values()],
         )
-        return None, data, None
+        return None, data, None, script_exit
 
-    tracer, data = run_trace()
-    return None, data, tracer
+    tracer, data, script_exit = run_trace()
+    return None, data, tracer, script_exit
 
 
 def _run_target() -> int:
@@ -336,7 +350,7 @@ def _run_target() -> int:
 
     args: Namespace = parser.parse_args()
 
-    err, data, tracer = _trace_script(args.target, args)
+    err, data, tracer, script_exit = _trace_script(args.target, args)
     if err is not None:
         return err
 
@@ -344,10 +358,10 @@ def _run_target() -> int:
     if tracer is None:
         _export_results(data, args)
         exit_code = _compare_and_fail(data, args)
-        return exit_code if exit_code is not None else 0
+        return exit_code if exit_code is not None else script_exit
 
     exit_code = _finish_trace(tracer, args)
-    return exit_code if exit_code is not None else 0
+    return exit_code if exit_code is not None else script_exit
 
 
 def _run_baseline_command(argv: List[str]) -> int:
@@ -394,7 +408,7 @@ def _run_baseline_command(argv: List[str]) -> int:
         return _compare_files(args)
 
     args.json = args.output
-    err, data, tracer = _trace_script(args.target, args)
+    err, data, tracer, script_exit = _trace_script(args.target, args)
     if err is not None:
         return err
 
@@ -403,7 +417,7 @@ def _run_baseline_command(argv: List[str]) -> int:
     print(f"Baseline saved: {os.path.abspath(args.output)}")
     if tracer is not None:
         tracer.show_results(args.top)
-    return 0
+    return script_exit
 
 
 def _run_command(argv: List[str]) -> int:
