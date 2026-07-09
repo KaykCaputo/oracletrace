@@ -374,6 +374,63 @@ def test_main_returns_1_when_compare_file_not_found(monkeypatch, tmp_path, trace
     assert "Compare file not found:" in captured.err
 
 
+def test_main_returns_1_when_compare_file_has_invalid_json(monkeypatch, tmp_path, trace_data, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    compare_file = tmp_path / "baseline.json"
+    compare_file.write_text("{invalid json", encoding="utf-8")
+
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", str(target), "--compare", str(compare_file)],
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "Compare file contains invalid JSON:" in captured.err
+
+
+def test_main_returns_1_when_compare_file_has_invalid_schema(monkeypatch, tmp_path, trace_data, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    compare_file = tmp_path / "baseline.json"
+    compare_file.write_text('{"foo": "bar"}', encoding="utf-8")
+
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", str(target), "--compare", str(compare_file)],
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "Compare file has invalid schema:" in captured.err
+
+
+def test_main_returns_1_when_compare_file_empty(monkeypatch, tmp_path, trace_data, capsys):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    compare_file = tmp_path / "baseline.json"
+    compare_file.write_text("", encoding="utf-8")
+
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", str(target), "--compare", str(compare_file)],
+    )
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert "Compare file contains invalid JSON" in captured.err
+
+
 def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace_data, capsys):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")

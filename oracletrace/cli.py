@@ -11,6 +11,7 @@ from dataclasses import asdict
 from importlib.metadata import version
 from argparse import ArgumentParser, Namespace
 from typing import List, Dict, Any, Optional, Tuple
+from json import JSONDecodeError
 
 from .reporters import generate_html_report
 from .compare import compare_traces, ComparisonData
@@ -168,8 +169,21 @@ def _compare_and_fail(
         print(f"Compare file not found: {args.compare}", file=sys.stderr)
         return 1
 
-    with open(args.compare, "r", encoding="utf-8") as f:
-        old_data: TracerData = TracerData.from_dict(json.load(f))
+    try:
+        with open(args.compare, "r", encoding="utf-8") as f:
+            loaded_data = json.load(f)
+    except JSONDecodeError as e:
+        print(f"Compare file contains invalid JSON: {e}", file=sys.stderr)
+        return 1
+    except OSError as e:
+        print(f"Compare file read error: {e}", file=sys.stderr)
+        return 1
+
+    try:
+        old_data: TracerData = TracerData.from_dict(loaded_data)
+    except (KeyError, TypeError, ValueError) as e:
+        print(f"Compare file has invalid schema: {e}", file=sys.stderr)
+        return 1
 
     comparison_result: ComparisonData = compare_traces(
         old_data,
