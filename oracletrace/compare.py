@@ -1,7 +1,9 @@
-from .tracer import TracerData, FunctionData
+from .tracer import TracerData, FunctionData, _safe_char
 from rich import print
 from typing import Any, Dict, List, Set, Optional
 from dataclasses import dataclass
+
+_ARROW = _safe_char("→", "->")
 
 @dataclass
 class RegressionData:
@@ -59,7 +61,7 @@ def compare_traces(
 
         print(
             f"{name}\n"
-            f"    total_time: {old_time:.4f}s → {new_time:.4f}s "
+            f"    total_time: {old_time:.4f}s {_ARROW} {new_time:.4f}s "
             f"[{color}]({percent:+.2f}%)[/]\n"
         ) if not show_only_regressions or percent > threshold else ...
         
