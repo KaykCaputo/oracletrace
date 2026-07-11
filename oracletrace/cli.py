@@ -14,6 +14,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from json import JSONDecodeError
 
 from .reporters import generate_html_report
+from .runner import execute_command, UnsupportedCommandError
 from .compare import compare_traces, ComparisonData
 from .tracer import Tracer, TracerData, TracerMetadata, FunctionData, FunctionAggregate
 
@@ -337,7 +338,7 @@ def _run_target() -> int:
     parser: ArgumentParser = ArgumentParser(
         prog=_MODULE_NAME,
         description="OracleTrace - Lightweight execution tracer for Python projects",
-        epilog="Subcommands:\n  run  Run a command (e.g., pytest) with tracing. See 'oracletrace run --help'.",
+        epilog="Subcommands:\n  run  Run a command (pytest, python script.py, python -m module) with tracing. See 'oracletrace run --help'.",
         parents=[_BASE_PARSER],
     )
     parser.add_argument("target", help="Python script to trace")
@@ -429,7 +430,9 @@ def _run_command(argv: List[str]) -> int:
     parser.add_argument(
         "command",
         nargs=argparse.REMAINDER,
-        help="Command to run (e.g., pytest). Use -- to separate oracletrace options from the command.",
+        help="Command to run. Supported: pytest, python <script.py>, "
+        "python -m <module>, <script.py>. "
+        "Use -- to separate oracletrace options from the command.",
     )
 
     parsed: Namespace = parser.parse_args(argv)
@@ -445,40 +448,21 @@ def _run_command(argv: List[str]) -> int:
         )
         return 1
 
-    cmd: str = parsed.command[0]
-
-    if cmd == "pytest":
-        return _run_pytest(parsed)
-    else:
-        print(
-            f"error: unsupported command '{cmd}'. Only 'pytest' is supported.",
-            file=sys.stderr,
-        )
-        return 1
-
-
-def _run_pytest(args: Namespace) -> int:
-    try:
-        import pytest
-    except ImportError:
-        print(
-            "error: pytest is not installed. Install it with: pip install pytest",
-            file=sys.stderr,
-        )
-        return 1
-
-    err, tracer = _init_tracer(args)
+    err, tracer = _init_tracer(parsed)
     if err is not None:
         return err
     assert tracer is not None
 
     try:
-        pytest_exit_code: int = pytest.main(args.command[1:])
+        program_exit: int = execute_command(parsed.command)
+    except UnsupportedCommandError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
     finally:
         tracer.stop()
 
-    exit_code = _finish_trace(tracer, args)
-    return exit_code if exit_code is not None else pytest_exit_code
+    exit_code = _finish_trace(tracer, parsed)
+    return exit_code if exit_code is not None else program_exit
 
 
 if __name__ == "__main__":
