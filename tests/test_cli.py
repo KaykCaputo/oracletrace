@@ -690,10 +690,11 @@ def test_run_missing_command(monkeypatch, capsys):
 
 
 def test_run_unsupported_command(monkeypatch, capsys):
+    # non-Python binaries can't be traced in-process and are rejected
     exit_code = _run_cli(monkeypatch, ["oracletrace", "run", "--", "mycmd"])
     captured = capsys.readouterr()
     assert exit_code == 1
-    assert "unsupported command" in captured.err
+    assert "cannot trace 'mycmd'" in captured.err
 
 
 def test_run_pytest_basic(monkeypatch, empty_trace_data):
