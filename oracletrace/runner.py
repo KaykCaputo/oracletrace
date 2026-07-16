@@ -29,7 +29,9 @@ _PYTHON_ALIASES = {"python", "python3", "py"}
 
 
 def _is_python_launcher(token: str) -> bool:
-    base = os.path.basename(token).lower()
+    # os.path.basename only splits the native separator — a Windows-style
+    # path must still be recognized when parsed on POSIX (and vice versa)
+    base = token.replace("\\", "/").rsplit("/", 1)[-1].lower()
     if base.endswith(".exe"):
         base = base[:-4]
     # strip minor-versioned launchers: python3.12 -> python3
