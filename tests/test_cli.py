@@ -185,6 +185,47 @@ def test_main_runs_trace_and_exports_json_and_csv(monkeypatch, tmp_path, trace_d
     assert sys.path[0] == str(target.parent.resolve())
 
 
+def test_main_exports_markdown(monkeypatch, tmp_path, trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    md_output = tmp_path / "report.md"
+
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", str(target), "--markdown", str(md_output)],
+    )
+
+    assert exit_code == 0
+    content = md_output.read_text(encoding="utf-8")
+    assert content.startswith("## ⚡ OracleTrace Performance Report")
+    assert "foo" in content
+
+
+def test_main_markdown_includes_comparison(monkeypatch, tmp_path, trace_data, baseline_trace_data):
+    target = tmp_path / "target.py"
+    target.write_text("print('hello')\n", encoding="utf-8")
+    compare_file = tmp_path / "baseline.json"
+    compare_file.write_text(json.dumps(asdict(baseline_trace_data), default=set_default), encoding="utf-8")
+    md_output = tmp_path / "report.md"
+
+    monkeypatch.setattr(cli, "Tracer", lambda root, ignore_patterns: FakeTracer(root, ignore_patterns, trace_data))
+    monkeypatch.setattr(cli.runpy, "run_path", lambda *args, **kwargs: None)
+
+    exit_code = _run_cli(
+        monkeypatch,
+        ["oracletrace", str(target), "--compare", str(compare_file), "--markdown", str(md_output)],
+    )
+
+    assert exit_code == 0
+    content = md_output.read_text(encoding="utf-8")
+    # foo went 1.5s -> 2.0s, a regression, so the comparison section renders
+    assert "### Comparison vs. baseline" in content
+    assert "🔴" in content
+
+
 def test_main_passes_top_value_to_show_results(monkeypatch, tmp_path, trace_data):
     target = tmp_path / "target.py"
     target.write_text("print('hello')\n", encoding="utf-8")
