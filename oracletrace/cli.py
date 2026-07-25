@@ -16,6 +16,7 @@ from json import JSONDecodeError
 from .reporters import generate_html_report
 from .runner import execute_command, UnsupportedCommandError
 from .compare import compare_traces, ComparisonData
+from .display import print_comparison
 from .tracer import Tracer, TracerData, TracerMetadata, FunctionData, FunctionAggregate
 
 
@@ -190,8 +191,8 @@ def _compare_and_fail(
         old_data,
         data,
         threshold=args.threshold,
-        show_only_regressions=args.only_regressions,
     )
+    print_comparison(comparison_result, only_regressions=args.only_regressions)
 
     if args.fail_on_regression and comparison_result.has_regression:
         print(
@@ -222,8 +223,8 @@ def _compare_files(args: Namespace) -> int:
         baseline_data,
         current_data,
         threshold=args.threshold,
-        show_only_regressions=args.only_regressions,
     )
+    print_comparison(comparison_result, only_regressions=args.only_regressions)
 
     if args.fail_on_regression and comparison_result.has_regression:
         print(

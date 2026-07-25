@@ -1,9 +1,30 @@
-from .tracer import TracerData, FunctionData, _safe_char
-from rich import print
-from typing import Any, Dict, List, Set, Optional
-from dataclasses import dataclass
+"""Pure comparison logic. No printing, no side effects — returns structured
+data that any reporter (terminal, Markdown, HTML, ...) can render.
+"""
 
-_ARROW = _safe_char("→", "->")
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Set
+
+from .tracer import TracerData, FunctionData
+
+# Delta status values
+REGRESSION = "regression"
+IMPROVEMENT = "improvement"
+STABLE = "stable"
+NEW = "new"
+REMOVED = "removed"
+NO_SIGNAL = "no_signal"      # both runs recorded zero time
+NO_BASELINE = "no_baseline"  # baseline recorded zero time
+
+
+@dataclass
+class FunctionDelta:
+    name: str
+    status: str
+    old_time: Optional[float] = None
+    new_time: Optional[float] = None
+    percent: Optional[float] = None
+
 
 @dataclass
 class RegressionData:
@@ -12,23 +33,31 @@ class RegressionData:
     new_time: float
     percent: float
 
+
 @dataclass
 class ComparisonData:
+    deltas: List[FunctionDelta]
     regressions: List[RegressionData]
+    improvements: List[RegressionData]
+    new_functions: List[str]
+    removed_functions: List[str]
+    threshold: float
     has_regression: bool
+
 
 def compare_traces(
     old_data: TracerData,
     new_data: TracerData,
     threshold: float = 5.0,
-    show_only_regressions: bool = False
 ) -> ComparisonData:
     old_funcs: Dict[str, FunctionData] = {f.name: f for f in old_data.functions}
     new_funcs: Dict[str, FunctionData] = {f.name: f for f in new_data.functions}
 
+    deltas: List[FunctionDelta] = []
     regressions: List[RegressionData] = []
-
-    print("\n[bold cyan]Comparison Results:[/]\n")
+    improvements: List[RegressionData] = []
+    new_functions: List[str] = []
+    removed_functions: List[str] = []
 
     all_functions: Set[str] = set(old_funcs) | set(new_funcs)
 
@@ -37,46 +66,56 @@ def compare_traces(
         new: Optional[FunctionData] = new_funcs.get(name)
 
         if not old:
-            print(f"[green]+ {name} (new function)[/]")
+            new_functions.append(name)
+            deltas.append(FunctionDelta(
+                name=name, status=NEW,
+                new_time=new.total_time if new else None,
+            ))
             continue
 
         if not new:
-            print(f"[red]- {name} (removed)[/]")
+            removed_functions.append(name)
+            deltas.append(FunctionDelta(
+                name=name, status=REMOVED, old_time=old.total_time,
+            ))
             continue
 
         old_time: float = old.total_time
         new_time: float = new.total_time
 
         if old_time == 0:
-            if new_time == 0:
-                print(f"{name} [yellow](no signal)[/]")
-                continue
-            print(f"{name} [yellow](no baseline)[/]")
+            status = NO_SIGNAL if new_time == 0 else NO_BASELINE
+            deltas.append(FunctionDelta(
+                name=name, status=status, old_time=old_time, new_time=new_time,
+            ))
             continue
 
-        diff: float = new_time - old_time
-        percent: float = (diff / old_time) * 100
+        percent: float = ((new_time - old_time) / old_time) * 100
 
-        color: str = "red" if percent > threshold else "green" if percent < -threshold else "yellow"
-
-        print(
-            f"{name}\n"
-            f"    total_time: {old_time:.4f}s {_ARROW} {new_time:.4f}s "
-            f"[{color}]({percent:+.2f}%)[/]\n"
-        ) if not show_only_regressions or percent > threshold else ...
-        
-        
         if percent > threshold:
-            regressions.append(
-                RegressionData(
-                        name = name,
-                        new_time = new_time,
-                        old_time = old_time,
-                        percent = percent
-                    )
-            )
+            status = REGRESSION
+            regressions.append(RegressionData(
+                name=name, old_time=old_time, new_time=new_time, percent=percent,
+            ))
+        elif percent < -threshold:
+            status = IMPROVEMENT
+            improvements.append(RegressionData(
+                name=name, old_time=old_time, new_time=new_time, percent=percent,
+            ))
+        else:
+            status = STABLE
+
+        deltas.append(FunctionDelta(
+            name=name, status=status,
+            old_time=old_time, new_time=new_time, percent=percent,
+        ))
 
     return ComparisonData(
-        regressions = regressions,
-        has_regression = len(regressions) > 0
+        deltas=deltas,
+        regressions=regressions,
+        improvements=improvements,
+        new_functions=new_functions,
+        removed_functions=removed_functions,
+        threshold=threshold,
+        has_regression=len(regressions) > 0,
     )

@@ -442,9 +442,13 @@ def test_main_fails_with_exit_2_on_regression(monkeypatch, tmp_path, empty_trace
 
     compare_calls = []
 
-    def fake_compare_traces(old_data, new_data, threshold, show_only_regressions):
-        compare_calls.append((old_data, new_data, threshold, show_only_regressions))
-        return ComparisonData(regressions=[], has_regression=True)
+    def fake_compare_traces(old_data, new_data, threshold):
+        compare_calls.append((old_data, new_data, threshold))
+        return ComparisonData(
+            deltas=[], regressions=[], improvements=[],
+            new_functions=[], removed_functions=[],
+            threshold=threshold, has_regression=True,
+        )
 
     monkeypatch.setattr(cli, "compare_traces", fake_compare_traces)
 
@@ -478,9 +482,10 @@ def test_main_returns_0_when_no_regression(monkeypatch, tmp_path, trace_data):
     monkeypatch.setattr(
         cli,
         "compare_traces",
-        lambda old_data, new_data, threshold, show_only_regressions: ComparisonData(
-            regressions=[],
-            has_regression=False
+        lambda old_data, new_data, threshold: ComparisonData(
+            deltas=[], regressions=[], improvements=[],
+            new_functions=[], removed_functions=[],
+            threshold=threshold, has_regression=False,
         )
     )
 
@@ -822,12 +827,21 @@ def test_baseline_compare_returns_0_without_regression(monkeypatch, tmp_path, tr
     current.write_text(json.dumps(asdict(trace_data), default=set_default), encoding="utf-8")
 
     compare_calls = []
+    display_calls = []
 
-    def fake_compare_traces(old_data, new_data, threshold, show_only_regressions):
-        compare_calls.append((old_data, new_data, threshold, show_only_regressions))
-        return ComparisonData(regressions=[], has_regression=False)
+    def fake_compare_traces(old_data, new_data, threshold):
+        compare_calls.append((old_data, new_data, threshold))
+        return ComparisonData(
+            deltas=[], regressions=[], improvements=[],
+            new_functions=[], removed_functions=[],
+            threshold=threshold, has_regression=False,
+        )
 
     monkeypatch.setattr(cli, "compare_traces", fake_compare_traces)
+    monkeypatch.setattr(
+        cli, "print_comparison",
+        lambda comparison, only_regressions=False: display_calls.append(only_regressions),
+    )
 
     exit_code = _run_cli(
         monkeypatch,
@@ -845,7 +859,7 @@ def test_baseline_compare_returns_0_without_regression(monkeypatch, tmp_path, tr
 
     assert exit_code == 0
     assert compare_calls[0][2] == 12.5
-    assert compare_calls[0][3] is True
+    assert display_calls[0] is True
 
 
 def test_baseline_compare_fails_with_exit_2_on_regression(monkeypatch, tmp_path, trace_data, capsys):
@@ -857,9 +871,10 @@ def test_baseline_compare_fails_with_exit_2_on_regression(monkeypatch, tmp_path,
     monkeypatch.setattr(
         cli,
         "compare_traces",
-        lambda old_data, new_data, threshold, show_only_regressions: ComparisonData(
-            regressions=[],
-            has_regression=True,
+        lambda old_data, new_data, threshold: ComparisonData(
+            deltas=[], regressions=[], improvements=[],
+            new_functions=[], removed_functions=[],
+            threshold=threshold, has_regression=True,
         ),
     )
 
