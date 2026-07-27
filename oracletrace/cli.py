@@ -13,7 +13,7 @@ from argparse import ArgumentParser, Namespace
 from typing import List, Dict, Any, Optional, Tuple
 from json import JSONDecodeError
 
-from .reporters import generate_html_report
+from .reporters import generate_html_report, generate_markdown_report
 from .runner import execute_command, UnsupportedCommandError
 from .compare import compare_traces, ComparisonData
 from .display import print_comparison
@@ -74,6 +74,7 @@ _BASE_PARSER: ArgumentParser = ArgumentParser(add_help=False)
 _BASE_PARSER.add_argument("--json", help="Export trace result to JSON file")
 _BASE_PARSER.add_argument("--csv", help="Export trace result to CSV file")
 _BASE_PARSER.add_argument("--html", help="Export trace result to interactive HTML file")
+_BASE_PARSER.add_argument("--markdown", help="Export a Markdown report (PR-comment / CI-summary ready)")
 _BASE_PARSER.add_argument("--compare", help="Compare against previous trace JSON")
 _BASE_PARSER.add_argument(
     "--ignore",
@@ -112,6 +113,7 @@ _BASE_PARSER.add_argument(
 _BASELINE_SAVE_PARSER: ArgumentParser = ArgumentParser(add_help=False)
 _BASELINE_SAVE_PARSER.add_argument("--csv", help="Export trace result to CSV file")
 _BASELINE_SAVE_PARSER.add_argument("--html", help="Export trace result to interactive HTML file")
+_BASELINE_SAVE_PARSER.add_argument("--markdown", help="Export a Markdown report (PR-comment / CI-summary ready)")
 _BASELINE_SAVE_PARSER.add_argument(
     "--ignore",
     metavar="REGEX",
@@ -137,7 +139,11 @@ def _set_default(obj: Any) -> Any:
     raise TypeError
 
 
-def _export_results(data: TracerData, args: Namespace) -> None:
+def _export_results(
+    data: TracerData,
+    args: Namespace,
+    comparison: Optional[ComparisonData] = None,
+) -> None:
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
             json.dump(asdict(data), f, indent=4, default=_set_default)
@@ -160,41 +166,55 @@ def _export_results(data: TracerData, args: Namespace) -> None:
         generate_html_report(data, args.html)
         print(f"HTML report generated: {os.path.abspath(args.html)}")
 
+    if getattr(args, "markdown", None):
+        generate_markdown_report(data, args.markdown, comparison=comparison, top=args.top)
+        print(f"Markdown report generated: {os.path.abspath(args.markdown)}")
 
-def _compare_and_fail(
+
+def _load_comparison(
     data: TracerData, args: Namespace
-) -> Optional[int]:
+) -> Tuple[Optional[int], Optional[ComparisonData]]:
+    """Load the --compare baseline and run the comparison. Returns
+    (error_code, None) on any failure, (None, None) when no baseline was
+    requested, or (None, comparison) on success. Pure of side effects
+    beyond printing errors — the display and the exit-code gate live in the
+    caller so exports can reuse the same comparison."""
     if not args.compare:
-        return None
+        return None, None
 
     if not os.path.exists(args.compare):
         print(f"Compare file not found: {args.compare}", file=sys.stderr)
-        return 1
+        return 1, None
 
     try:
         with open(args.compare, "r", encoding="utf-8") as f:
             loaded_data = json.load(f)
     except JSONDecodeError as e:
         print(f"Compare file contains invalid JSON: {e}", file=sys.stderr)
-        return 1
+        return 1, None
     except OSError as e:
         print(f"Compare file read error: {e}", file=sys.stderr)
-        return 1
+        return 1, None
 
     try:
         old_data: TracerData = TracerData.from_dict(loaded_data)
     except (KeyError, TypeError, ValueError) as e:
         print(f"Compare file has invalid schema: {e}", file=sys.stderr)
-        return 1
+        return 1, None
 
     comparison_result: ComparisonData = compare_traces(
         old_data,
         data,
         threshold=args.threshold,
     )
-    print_comparison(comparison_result, only_regressions=args.only_regressions)
+    return None, comparison_result
 
-    if args.fail_on_regression and comparison_result.has_regression:
+
+def _report_comparison(comparison: ComparisonData, args: Namespace) -> Optional[int]:
+    """Print the comparison and apply the regression gate."""
+    print_comparison(comparison, only_regressions=args.only_regressions)
+
+    if args.fail_on_regression and comparison.has_regression:
         print(
             f"Build failed: performance regression above {args.threshold:.2f}% detected.",
             file=sys.stderr,
@@ -253,9 +273,14 @@ def _init_tracer(args: Namespace) -> Tuple[Optional[int], Optional[Tracer]]:
 
 def _finish_trace(tracer: Tracer, args: Namespace) -> Optional[int]:
     data = tracer.get_trace_data()
-    _export_results(data, args)
+    err, comparison = _load_comparison(data, args)
+    if err is not None:
+        return err
+    _export_results(data, args, comparison)
     tracer.show_results(args.top)
-    return _compare_and_fail(data, args)
+    if comparison is not None:
+        return _report_comparison(comparison, args)
+    return None
 
 
 def _trace_script(
@@ -358,9 +383,15 @@ def _run_target() -> int:
 
     assert data is not None
     if tracer is None:
-        _export_results(data, args)
-        exit_code = _compare_and_fail(data, args)
-        return exit_code if exit_code is not None else script_exit
+        err, comparison = _load_comparison(data, args)
+        if err is not None:
+            return err
+        _export_results(data, args, comparison)
+        if comparison is not None:
+            gate = _report_comparison(comparison, args)
+            if gate is not None:
+                return gate
+        return script_exit
 
     exit_code = _finish_trace(tracer, args)
     return exit_code if exit_code is not None else script_exit
